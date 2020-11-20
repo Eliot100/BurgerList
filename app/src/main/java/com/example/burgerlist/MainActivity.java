@@ -7,10 +7,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.burgerlist.ui.login.LoginActivity;
 
 
 public class MainActivity extends AppCompatActivity {
-Button login_button;
+    Button login_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,21 +23,16 @@ Button login_button;
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(this, Login_activity.class);
-                startActivity(intent);
-
-
+                start_Login();
             }
         });
 
 
+    }
 
-
-
-
-
-
-
+    private void start_Login() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
 
