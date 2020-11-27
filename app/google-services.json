@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "628107792215",
+    "firebase_url": "https://burgerlist-db-14524.firebaseio.com",
+    "project_id": "burgerlist-db-14524",
+    "storage_bucket": "burgerlist-db-14524.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628107792215:android:25e2cd5b146efdef7d7812",
+        "android_client_info": {
+          "package_name": "com.example.burgerlist"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628107792215-uotgcmqqk5kg23oao3e84ai164g26avv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu3Wc2M-GYMNj2FHYuvo1NP0N1v2mhrT4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628107792215-uotgcmqqk5kg23oao3e84ai164g26avv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
