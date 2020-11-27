@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import com.example.burgerlist.ui.login.LoginActivity;
+
 
 
 public class MainActivity extends AppCompatActivity {
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void start_Login() {
-        Intent intent = new Intent(this, LoginActivity.class);
+        Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
 
