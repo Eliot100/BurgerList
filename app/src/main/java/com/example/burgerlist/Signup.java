@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +25,8 @@ public class Signup extends AppCompatActivity {
     private EditText Email;
     private EditText Password1;
     private EditText Password2;
+    private EditText Username;
+    private Switch Owner;
     private Button Sign_up;
 
     private FirebaseAuth mAuth;
@@ -37,9 +41,11 @@ public class Signup extends AppCompatActivity {
         Email = (EditText)findViewById(R.id.Email_text);
         Password1 = (EditText)findViewById(R.id.Password_text1);
         Password2 = (EditText)findViewById(R.id.Password_text2);
+        Username = (EditText)findViewById(R.id.Username_text);
+        Owner = (Switch)findViewById(R.id.Owner_switch);
         Sign_up = (Button)findViewById(R.id.Sign_up_btn);
 
-        mAuth = FirebaseAuth.getInstance();
+
 
 
         //Assigning listeners
@@ -47,7 +53,25 @@ public class Signup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(Password1.getText().toString().equals(Password2.getText().toString())){
-                        Sign_up_user(Email.getText().toString(),Password1.getText().toString());
+                        if(Password1.getText().toString().length()>=6){
+                            if(Username.getText().toString().length()>=4){
+                                if(Patterns.EMAIL_ADDRESS.matcher(Email.getText().toString()).matches()){
+                                    Sign_up_user(Email.getText().toString(),Password1.getText().toString(),Owner.isChecked(),Username.getText().toString());
+                                }
+                                else{
+                                    Toast.makeText(Signup.this, "Incorrect email format", Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                            else{
+                                Toast.makeText(Signup.this, "Username needs to be at least 4 characters", Toast.LENGTH_SHORT).show();
+                            }
+
+
+                        }
+                        else{
+                            Toast.makeText(Signup.this, "Password needs to be at least 6 characters.", Toast.LENGTH_SHORT).show();
+                        }
                 }
                 else{
                     Toast.makeText(Signup.this, "Passwords dont match",
@@ -60,29 +84,10 @@ public class Signup extends AppCompatActivity {
     }
 
 
-    private void Sign_up_user(String email,String password){
-        mAuth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
+    private void Sign_up_user(String Email,String Password,boolean Owner ,String Username){
 
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(Signup.this, "Your account has been registered",
-                                    Toast.LENGTH_SHORT).show();
 
-                        } else {
-                            // If sign in fails, display a message to the user.
 
-                            Toast.makeText(Signup.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
-
-                        }
-
-                        // ...
-                    }
-                });
     }
 
 
