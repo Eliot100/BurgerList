@@ -83,7 +83,7 @@ public class Signup extends AppCompatActivity {
                         }
                 }
                 else{
-                    Toast.makeText(Signup.this, "Passwords dont match",
+                    Toast.makeText(Signup.this, "Passwords don't match",
                             Toast.LENGTH_SHORT).show();
                 }
             }
@@ -95,10 +95,6 @@ public class Signup extends AppCompatActivity {
     // adds new user to database.
     private void Sign_up_user(String Email,String Password,boolean Owner ,String Username){
         setProgressBarVisibility(true);
-
-
-        Toast.makeText(Signup.this, "we are here", Toast.LENGTH_SHORT).show();
-
 
         mAuth.createUserWithEmailAndPassword(Email,Password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

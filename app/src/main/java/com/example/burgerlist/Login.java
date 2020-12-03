@@ -54,7 +54,6 @@ public class Login extends AppCompatActivity {
         Sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"kek", Toast.LENGTH_SHORT).show();
                 sign_up_screen();
             }
         });
