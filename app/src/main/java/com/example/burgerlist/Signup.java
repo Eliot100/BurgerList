@@ -53,6 +53,11 @@ public class Signup extends AppCompatActivity {
 
 
         //Assigning listeners
+
+
+        //When sign up button is pressed , will check if passwords match and above 5 in length , will check that username is above 4 chars.
+        //and will check that the emial in correct format.
+        // if all true will send to Sign_up_user function.
         Sign_up.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -87,7 +92,7 @@ public class Signup extends AppCompatActivity {
 
     }
 
-
+    // adds new user to database.
     private void Sign_up_user(String Email,String Password,boolean Owner ,String Username){
         setProgressBarVisibility(true);
 
