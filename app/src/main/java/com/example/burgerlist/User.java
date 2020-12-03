@@ -6,17 +6,15 @@ public class User {
 
     private String Username;
     private String Email;
-    private String Password1;
-    private String Password2;
+    private String Password;
     private boolean Owner;
 
     public User() {
     }
 
-    public User(String email, String password1, String password2, String username, boolean owner) {
+    public User(String email, String password ,String username, boolean owner) {
         Email = email;
-        Password1 = password1;
-        Password2 = password2;
+        Password = Password;
         Username = username;
         Owner = owner;
     }
@@ -29,20 +27,12 @@ public class User {
         Email = email;
     }
 
-    public String getPassword1() {
-        return Password1;
+    public String getPassword() {
+        return Password;
     }
 
-    public void setPassword1(String password1) {
-        Password1 = password1;
-    }
-
-    public String getPassword2() {
-        return Password2;
-    }
-
-    public void setPassword2(String password2) {
-        Password2 = password2;
+    public void setPassword(String password) {
+        Password = password;
     }
 
     public String getUsername() {

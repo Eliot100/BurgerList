@@ -9,6 +9,7 @@ import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +19,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class Signup extends AppCompatActivity {
 
@@ -44,6 +46,8 @@ public class Signup extends AppCompatActivity {
         Username = (EditText)findViewById(R.id.Username_text);
         Owner = (Switch)findViewById(R.id.Owner_switch);
         Sign_up = (Button)findViewById(R.id.Sign_up_btn);
+
+        mAuth = FirebaseAuth.getInstance();
 
 
 
@@ -85,6 +89,41 @@ public class Signup extends AppCompatActivity {
 
 
     private void Sign_up_user(String Email,String Password,boolean Owner ,String Username){
+        setProgressBarVisibility(true);
+
+
+        Toast.makeText(Signup.this, "we are here", Toast.LENGTH_SHORT).show();
+
+
+        mAuth.createUserWithEmailAndPassword(Email,Password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            User user =  new User (Email,Password,Username,Owner);
+                            FirebaseDatabase.getInstance().getReference("Users")
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(user).
+                                    addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if(task.isSuccessful()){
+                                                Toast.makeText(Signup.this, "You have been registered",
+                                                        Toast.LENGTH_SHORT).show();
+                                                }
+                                            else{
+                                                Toast.makeText(Signup.this, "failed to registered",
+                                                        Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
+                        }
+                        else{
+                            Toast.makeText(Signup.this, "failed to registered", Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+                });
+
 
 
 
