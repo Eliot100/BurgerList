@@ -18,6 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+
+import java.security.KeyStore;
 
 // Variable declaration
 
@@ -29,7 +32,7 @@ public class Login extends AppCompatActivity {
     private EditText Password;
     private Button Login;
     private TextView Sign_up;
-
+    private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
     @Override
@@ -70,6 +73,7 @@ public class Login extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(getApplicationContext(),"Logged in", Toast.LENGTH_SHORT).show();
+                            Go_to_main(user);
                         } else {
                             Toast.makeText(Login.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
@@ -82,5 +86,14 @@ public class Login extends AppCompatActivity {
         Intent intent = new Intent(this, Signup.class);
         startActivity(intent);
 
+    }
+
+    private void Go_to_main(FirebaseUser user){
+        boolean IsloggedIn = true;
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra("ISLOGGEDIN",IsloggedIn);
+        intent.putExtra("USER_ID",user.getUid());
+
+        startActivity(intent);
     }
 }
