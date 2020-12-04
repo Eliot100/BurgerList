@@ -21,19 +21,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         login_button = (Button)findViewById(R.id.login_button);
-        userPageButton = (Button)findViewById(R.id.userListButton);
+        userPageButton = (Button)findViewById(R.id.userPageButton);
 
-
-        try{
-            user_id = getIntent().getStringExtra("USER_ID");
-            Toast.makeText(getApplicationContext(),user_id, Toast.LENGTH_LONG).show();
-            isloggedin = true;
-
-        } catch (Exception e) {
-                e.printStackTrace();
-        }
-
-
+//        try{
+//            user_id = getIntent().getStringExtra("USER_ID");
+//            Toast.makeText(getApplicationContext(),user_id, Toast.LENGTH_LONG).show();
+//            isloggedin = true;
+//        } catch (Exception e) {
+//                e.printStackTrace();
+//        }
 
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,9 +55,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void start_MyPage() {
         Intent intent = new Intent(this, my_page.class);
-        intent.putExtra("ISLOGGEDIN",isloggedin);
-        intent.putExtra("USER_ID",user_id);
-        Toast.makeText(getApplicationContext(), "my page", Toast.LENGTH_SHORT).show();
+//        intent.putExtra("ISLOGGEDIN", isloggedin);
+//        intent.putExtra("USER_ID", user_id);
+//        Toast.makeText(getApplicationContext(), "my page", Toast.LENGTH_SHORT).show();
         startActivity(intent);
 
     }
