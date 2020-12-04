@@ -57,6 +57,8 @@ public class my_page extends AppCompatActivity {
     }
 
     private void Create_RestPage() {
-
+        Intent intent = new Intent(this, CreateRestaurant.class);
+        Toast.makeText(getApplicationContext(),"CreateRestaurant", Toast.LENGTH_SHORT).show();
+        startActivity(intent);
     }
 }
