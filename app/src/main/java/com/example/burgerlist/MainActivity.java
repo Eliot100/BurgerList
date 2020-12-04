@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     Button login_button;
-    Button userListButton;
+    Button userPageButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -19,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         login_button = (Button)findViewById(R.id.login_button);
+        userPageButton = (Button)findViewById(R.id.userListButton);
 
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -27,12 +28,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        userListButton = (Button)findViewById(R.id.userListButton);
-
-        userListButton.setOnClickListener(new View.OnClickListener() {
+        userPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                start_ListPage();
+                start_MyPage();
             }
         });
 
@@ -44,11 +43,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void start_ListPage() {
+    private void start_MyPage() {
         Intent intent = new Intent(this, ListPage.class);
         Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
-
-
 }
