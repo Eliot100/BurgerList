@@ -12,7 +12,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     Button login_button;
     Button userPageButton;
-    String user_id;
+    String user_id = "";
     boolean isloggedin = false;
 
     @Override
