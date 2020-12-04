@@ -107,7 +107,7 @@ public class Signup extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
                                                 Toast.makeText(Signup.this, "You have been registered", Toast.LENGTH_SHORT).show();
-                                                Go_to_main();
+                                                Go_to_Login();
                                                 }
                                             else{
                                                 Toast.makeText(Signup.this, "failed to registered",
@@ -128,8 +128,8 @@ public class Signup extends AppCompatActivity {
 
     }
 
-    private void Go_to_main(){
-        Intent intent = new Intent(this, MainActivity.class);
+    private void Go_to_Login(){
+        Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
 
