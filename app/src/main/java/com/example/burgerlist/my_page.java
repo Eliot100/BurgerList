@@ -10,6 +10,8 @@ import android.widget.Toast;
 
 public class my_page extends AppCompatActivity {
     Button userListButton;
+    Button userRestButton;
+    Button CreateRestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,6 +19,7 @@ public class my_page extends AppCompatActivity {
         setContentView(R.layout.activity_my_page);
 
         userListButton = (Button)findViewById(R.id.userListButton);
+        userRestButton = (Button)findViewById(R.id.userRestButton);
 
         userListButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -24,13 +27,35 @@ public class my_page extends AppCompatActivity {
                 start_ListPage();
             }
         });
+
+        userRestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                start_RestPage();
+            }
+        });
+
+        CreateRestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Create_RestPage();
+            }
+        });
     }
-
-
 
     private void start_ListPage() {
         Intent intent = new Intent(this, ListPage.class);
         Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
         startActivity(intent);
+    }
+
+    private void start_RestPage() {
+        Intent intent = new Intent(this, RestPage.class);
+        Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
+        startActivity(intent);
+    }
+
+    private void Create_RestPage() {
+
     }
 }

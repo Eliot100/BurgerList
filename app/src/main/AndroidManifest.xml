@@ -9,7 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BurgerList">
-        <activity android:name=".my_page"></activity>
+        <activity android:name=".RestPage"></activity>
+        <activity android:name=".my_page" />
         <activity android:name=".ListPage" />
         <activity android:name=".Signup" />
         <activity android:name=".Login" />

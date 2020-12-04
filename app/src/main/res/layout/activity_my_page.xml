@@ -7,6 +7,49 @@
     tools:context=".my_page">
 
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".my_page">
+
+
+        <Button
+            android:id="@+id/userListButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:autoSizeTextType="uniform"
+            android:onClick="onButtonClike"
+            android:text="My List"
+            app:layout_constraintEnd_toStartOf="@+id/guideline"
+            app:layout_constraintStart_toStartOf="@+id/guideline2"
+            tools:layout_editor_absoluteY="16dp" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="174dp"
+            android:layout_height="89dp"
+            android:text="my page"
+            app:autoSizeTextType="uniform"
+            tools:layout_editor_absoluteX="168dp"
+            tools:layout_editor_absoluteY="33dp" />
+
+        <Button
+            android:id="@+id/CreateRestButton"
+            android:layout_width="158dp"
+            android:layout_height="37dp"
+            android:text="create restaurant"
+            android:autoSizeTextType="uniform"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="112dp" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/userRestButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Restaurant"
+        tools:layout_editor_absoluteY="59dp" />
+
     <Button
         android:id="@+id/userListButton"
         android:layout_width="wrap_content"
@@ -26,4 +69,11 @@
         app:autoSizeTextType="uniform"
         tools:layout_editor_absoluteX="168dp"
         tools:layout_editor_absoluteY="33dp" />
+
+    <Button
+        android:id="@+id/userRestButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Restaurant"
+        tools:layout_editor_absoluteY="59dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>
