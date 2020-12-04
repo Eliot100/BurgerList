@@ -18,6 +18,18 @@ public class my_page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
+
+        try{
+            String id = getIntent().getStringExtra("USER_ID");
+            Toast.makeText(getApplicationContext(),id, Toast.LENGTH_LONG).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
         userListButton = (Button)findViewById(R.id.userListButton);
         userRestButton = (Button)findViewById(R.id.userRestButton);
 
