@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void start_MyPage() {
-        Intent intent = new Intent(this, ListPage.class);
+        Intent intent = new Intent(this, my_page.class);
         Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
