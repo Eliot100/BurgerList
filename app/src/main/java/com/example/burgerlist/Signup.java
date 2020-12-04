@@ -3,6 +3,7 @@ package com.example.burgerlist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
@@ -75,8 +76,6 @@ public class Signup extends AppCompatActivity {
                             else{
                                 Toast.makeText(Signup.this, "Username needs to be at least 4 characters", Toast.LENGTH_SHORT).show();
                             }
-
-
                         }
                         else{
                             Toast.makeText(Signup.this, "Password needs to be at least 6 characters.", Toast.LENGTH_SHORT).show();
@@ -108,8 +107,7 @@ public class Signup extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
-                                                Toast.makeText(Signup.this, "You have been registered",
-                                                        Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(Signup.this, "You have been registered", Toast.LENGTH_SHORT).show();
                                                 }
                                             else{
                                                 Toast.makeText(Signup.this, "failed to registered",

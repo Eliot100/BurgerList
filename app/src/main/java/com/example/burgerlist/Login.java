@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,13 +62,14 @@ public class Login extends AppCompatActivity {
 
     //This function connects registered users to the database.
     private void validate(String email, String password){
+        
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(getApplicationContext(),"Logged in you FUCKING CUNT", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(),"Logged in", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(Login.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
