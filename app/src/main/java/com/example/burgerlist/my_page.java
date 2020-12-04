@@ -10,27 +10,53 @@ import android.widget.Toast;
 
 public class my_page extends AppCompatActivity {
     Button userListButton;
+    Button userRestButton;
+    Button CreateRestButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
-        userListButton = (Button)findViewById(R.id.userListButton);
-
-        userListButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start_ListPage();
-            }
-        });
+//        userListButton = (Button)findViewById(R.id.userListButton);
+//        userRestButton = (Button)findViewById(R.id.userRestButton);
+//        CreateRestButton;
+//
+//        userListButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                start_ListPage();
+//            }
+//        });
+//
+//        userRestButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                start_RestPage();
+//            }
+//        });
+//
+//        CreateRestButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
     }
-
-
 
     private void start_ListPage() {
         Intent intent = new Intent(this, ListPage.class);
         Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
         startActivity(intent);
+    }
+
+    private void start_RestPage() {
+        Intent intent = new Intent(this, RestPage.class);
+        Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
+        startActivity(intent);
+    }
+
+    private void Create_RestPage() {
+
     }
 }
