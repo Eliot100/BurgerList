@@ -8,11 +8,13 @@
 
     <Button
         android:id="@+id/login_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="87dp"
+        android:layout_height="49dp"
+        android:layout_marginEnd="4dp"
         android:text="Login"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="-3dp" />
+        app:layout_constraintStart_toStartOf="@+id/guideline5"
+        tools:layout_editor_absoluteY="4dp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -21,7 +23,53 @@
         android:layout_marginTop="4dp"
         android:text="BurgerList"
         android:textSize="36sp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="141dp" />
+        app:layout_constraintEnd_toStartOf="@+id/login_button"
+        app:layout_constraintStart_toEndOf="@+id/userListButton"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/userListButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="onButtonClike"
+        android:text="myList"
+        app:layout_constraintEnd_toStartOf="@+id/guideline"
+        app:layout_constraintStart_toStartOf="@+id/guideline2"
+        tools:layout_editor_absoluteY="4dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="91dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="3dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="52dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="405dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="319dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
