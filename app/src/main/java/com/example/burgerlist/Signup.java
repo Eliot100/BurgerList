@@ -94,7 +94,6 @@ public class Signup extends AppCompatActivity {
     // adds new user to database.
     private void Sign_up_user(String Email,String Password,boolean Owner ,String Username){
         setProgressBarVisibility(true);//do later
-
         mAuth.createUserWithEmailAndPassword(Email,Password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

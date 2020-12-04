@@ -60,7 +60,6 @@ public class Login extends AppCompatActivity {
                 else{
                     validate((String) Name.getText().toString(),Password.getText().toString());
                 }
-
             }
         });
 
