@@ -18,30 +18,30 @@ public class my_page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
-//        userListButton = (Button)findViewById(R.id.userListButton);
-//        userRestButton = (Button)findViewById(R.id.userRestButton);
-//        CreateRestButton;
-//
-//        userListButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                start_ListPage();
-//            }
-//        });
-//
-//        userRestButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                start_RestPage();
-//            }
-//        });
-//
-//        CreateRestButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+        userListButton = (Button)findViewById(R.id.userListButton);
+        userRestButton = (Button)findViewById(R.id.userRestButton);
+        CreateRestButton = (Button)findViewById(R.id.CreateRestButton);
+
+        userListButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                start_ListPage();
+            }
+        });
+
+        userRestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                start_RestPage();
+            }
+        });
+
+        CreateRestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Create_RestPage();
+            }
+        });
     }
 
     private void start_ListPage() {

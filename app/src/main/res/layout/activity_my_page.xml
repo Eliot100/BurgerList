@@ -8,50 +8,55 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="174dp"
-        android:layout_height="89dp"
-        android:layout_marginTop="44dp"
+        android:layout_width="176dp"
+        android:layout_height="99dp"
         android:text="my page"
         app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.86"
+        app:layout_constraintHorizontal_bias="0.876"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.079" />
 
     <Button
         android:id="@+id/userListButton"
         android:layout_width="156dp"
         android:layout_height="32dp"
-        android:layout_marginTop="64dp"
         android:autoSizeTextType="uniform"
         android:text="My List"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView"
-        app:layout_constraintHorizontal_bias="0.27"
+        app:layout_constraintHorizontal_bias="0.375"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/CreateRestButton"
-        android:layout_width="158dp"
-        android:layout_height="37dp"
-        android:layout_marginTop="56dp"
-        android:autoSizeTextType="uniform"
-        android:text="create restaurant"
-        app:layout_constraintEnd_toStartOf="@+id/textView"
-        app:layout_constraintHorizontal_bias="0.217"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userRestButton" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.072" />
 
     <Button
         android:id="@+id/userRestButton"
         android:layout_width="159dp"
         android:layout_height="57dp"
-        android:layout_marginTop="20dp"
         android:text="My Restaurant"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/textView"
-        app:layout_constraintHorizontal_bias="0.23"
+        app:layout_constraintHorizontal_bias="0.348"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userPageButton" />
+        app:layout_constraintTop_toBottomOf="@+id/userListButton"
+        app:layout_constraintVertical_bias="0.028" />
+
+    <Button
+        android:id="@+id/CreateRestButton"
+        android:layout_width="158dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="20dp"
+        android:autoSizeTextType="uniform"
+        android:text="create restaurant"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/textView"
+        app:layout_constraintHorizontal_bias="0.386"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userRestButton"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
