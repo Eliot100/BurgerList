@@ -16,8 +16,6 @@ public class my_page extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_page);
 
-
-
         userListButton = (Button)findViewById(R.id.userListButton);
 
         userListButton.setOnClickListener(new View.OnClickListener() {

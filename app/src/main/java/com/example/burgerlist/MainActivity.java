@@ -1,5 +1,6 @@
 package com.example.burgerlist;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -8,11 +9,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 
 public class MainActivity extends AppCompatActivity {
     Button login_button;
     Button userPageButton;
     String user_id = "";
+    User user;
     boolean isloggedin = false;
 
     @Override
@@ -20,15 +29,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //firebase references
+
+
         login_button = (Button)findViewById(R.id.login_button);
         userPageButton = (Button)findViewById(R.id.userListButton);
 
-
+        //check if user logged in if he did update info from firebase.
         try{
             user_id = getIntent().getStringExtra("USER_ID");
-            Toast.makeText(getApplicationContext(),user_id, Toast.LENGTH_LONG).show();
+            //Toast.makeText(getApplicationContext(),user_id, Toast.LENGTH_LONG).show();
             isloggedin = true;
-
         } catch (Exception e) {
                 e.printStackTrace();
         }
