@@ -51,7 +51,15 @@ public class Login extends AppCompatActivity {
         Login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                validate((String) Name.getText().toString(),Password.getText().toString());
+                if(Name.getText().toString().length() == 0){
+                    Toast.makeText(getApplicationContext(),"Enter username", Toast.LENGTH_SHORT).show();
+                }
+                else if(Password.getText().toString().length() == 0){
+                    Toast.makeText(getApplicationContext(),"Enter password", Toast.LENGTH_SHORT).show();
+                }
+                else{
+                    validate((String) Name.getText().toString(),Password.getText().toString());
+                }
             }
         });
 

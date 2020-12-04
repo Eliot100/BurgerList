@@ -19,6 +19,13 @@ public class User {
         Owner = owner;
     }
 
+    public User(User user) {
+        Email = user.getEmail();
+        Password = user.getPassword();
+        Username = user.getUsername();
+        Owner = user.isOwner();
+    }
+
     public String getEmail() {
         return Email;
     }
