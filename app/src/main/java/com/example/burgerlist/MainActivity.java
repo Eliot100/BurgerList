@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
 
         welome_user.setVisibility(View.GONE);
         login_button.setVisibility(View.GONE);
+        userPageButton.setVisibility(View.GONE);
         check_loggedin();
 
         login_button.setOnClickListener(new View.OnClickListener() {
@@ -74,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                     login_button.setVisibility(View.GONE);
                     welome_user.setText("Welcome "+user_name);
                     welome_user.setVisibility(View.VISIBLE);
-
+                    userPageButton.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -85,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             login_button.setVisibility(View.VISIBLE);
+
         }
 
     }
