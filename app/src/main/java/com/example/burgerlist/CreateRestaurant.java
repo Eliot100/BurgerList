@@ -16,10 +16,13 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,12 +30,12 @@ import com.google.firebase.auth.FirebaseAuth;
 public class CreateRestaurant extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     private static final int requestRestLoc = 100;
-    Button locationButton, createRestButton;
-    EditText phoneNum, RestName;
-    private Location currentLocation, RestLocation;
-    LocationManager locationManager;
-    LocationListener locationListener;
-    FusedLocationProviderClient fusedLocationProviderClient;
+    private Button locationButton, createRestButton;
+    private EditText phoneNum, RestName, RestLat, RestLng;
+    private Switch LocSwitch;
+   // private Boolean menualLocBool = !LocSwitch.isChecked();
+    private String visibilityMapLoc, visibilityManualLoc;
+    private LatLng RestLocation;
     private FirebaseAuth mAuth;
 
     @Override
@@ -42,58 +45,43 @@ public class CreateRestaurant extends AppCompatActivity {
 
         phoneNum = (EditText)findViewById(R.id.phoneNum);
         RestName = (EditText)findViewById(R.id.RestName);
-
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        locationListener = new LocationListener() {
-            @Override
-            public void onLocationChanged(@NonNull Location location) {
-                currentLocation = location;
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent locationSettings = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(locationSettings);
-            }
-        };
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION,
-                        Manifest.permission.INTERNET
-                }, REQUEST_CODE);
-                Toast.makeText(getApplicationContext(), "Location Update failed 1", Toast.LENGTH_SHORT).show();
-                return;
-            }
-//            onRequestPermissionsResult();
-            Toast.makeText(getApplicationContext(), "Location Update failed 0", Toast.LENGTH_SHORT).show();
-        } else {
-            locationManager.requestLocationUpdates("gps", 5000, 0, locationListener);
-            Toast.makeText(getApplicationContext(), "request Location Update", Toast.LENGTH_SHORT).show();
-        }
-
-
-        locationButton = (Button)findViewById(R.id.locationButton);
-        locationButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CreateRestLocation();
-            }
-        });
+        RestLat = (EditText)findViewById(R.id.RestLat);
+        RestLng = (EditText)findViewById(R.id.RestLng);
+//        LocSwitch = (Switch) findViewById(R.id.LocSwitch);
+//        LocSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if(LocSwitch.isChecked()){
+//                    RestLng.setVisibility(View.VISIBLE);
+//                    RestLat.setVisibility(View.VISIBLE);
+//                    locationButton.setVisibility(View.INVISIBLE);
+//                } else {
+//                    RestLng.setVisibility(View.INVISIBLE);
+//                    RestLat.setVisibility(View.INVISIBLE);
+//                    locationButton.setVisibility(View.VISIBLE);
+//                }
+//            }
+//        });
+//        locationButton = (Button)findViewById(R.id.locationButton);
+//        locationButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                CreateRestLocation();
+//            }
+//        });
 
         createRestButton = (Button)findViewById(R.id.createRestButton);
         createRestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (RestaurantIsReady()) {
-                    SetRestaurant();
+                    sendRestToDB();
                     Toast.makeText(getApplicationContext(), "Set Restaurant in data base", Toast.LENGTH_SHORT).show();
+                    //returnToUserPage();
                 }
             }
         });
     }
+
 
     private boolean RestaurantIsReady() {
         try {
@@ -116,7 +104,7 @@ public class CreateRestaurant extends AppCompatActivity {
         return true; // for now all names are good
     }
 
-    private void SetRestaurant() {
+    private void sendRestToDB() {
 //        mAuth.createRestaurantWithUserId(RestaurantId RestaurantId)
 //             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
 //                @Override
@@ -149,7 +137,6 @@ public class CreateRestaurant extends AppCompatActivity {
 //                    }
 //                }
 //             });
-        returnToUserPage();
     }
 
     private void returnToUserPage() {
@@ -172,58 +159,59 @@ public class CreateRestaurant extends AppCompatActivity {
         startActivityForResult(intentRestLoc, requestRestLoc);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Toast.makeText(getApplicationContext(), "onActivityResult : Getting rest loc", Toast.LENGTH_SHORT).show();
-        switch (requestCode) {
-//        if(requestCode == 1){
-//            if(requestCode == RESULT_OK){
-//                RestLocation = new Location(data.getStringExtra("RestLocation"));
-//                Toast.makeText(getApplicationContext(),"The location is set", Toast.LENGTH_SHORT).show();
-//                return;
-//            }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        Toast.makeText(getApplicationContext(), "onActivityResult : Getting rest loc", Toast.LENGTH_SHORT).show();
+//        switch (requestCode) {
+////        if(requestCode == 1){
+////            if(requestCode == RESULT_OK){
+////                RestLocation = new Location(data.getStringExtra("RestLocation"));
+////                Toast.makeText(getApplicationContext(),"The location is set", Toast.LENGTH_SHORT).show();
+////                return;
+////            }
+////
+//            case requestRestLoc:
+//                if (requestCode == this.RESULT_OK) {
+//                    RestLocation = new Location(data.getStringExtra("RestLocation"));
+//                    Toast.makeText(getApplicationContext(), "RestLocation: " + RestLocation.getLatitude()
+//                            + "" + RestLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+//                }
+//                break;
+//        }
+//        //error
+//    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode){
+//            case REQUEST_CODE:
+//                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+//                    Toast.makeText(getApplicationContext(), "fetch Last Location", Toast.LENGTH_SHORT).show();
+//                    fetchLastLocation();
+//                }
+//                break;
+//        }
+//    }
+
 //
-            case requestRestLoc:
-                if (requestCode == this.RESULT_OK) {
-                    RestLocation = new Location(data.getStringExtra("RestLocation"));
-                    Toast.makeText(getApplicationContext(), "RestLocation: " + RestLocation.getLatitude()
-                            + "" + RestLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-                }
-                break;
-        }
-        //error
-    }
+//    private void fetchLastLocation() {
+//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[]
+//                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+//            return;
+//        }
+//        Task<Location> task = fusedLocationProviderClient.getLastLocation();
+//        task.addOnSuccessListener(new OnSuccessListener<Location>() {
+//            @Override
+//            public void onSuccess(Location location) {
+//                if (location != null){
+//                    currentLocation = location;
+//                    Toast.makeText(getApplicationContext(), currentLocation.getLatitude()
+//                            +""+currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//    }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
-            case REQUEST_CODE:
-                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Toast.makeText(getApplicationContext(), "fetch Last Location", Toast.LENGTH_SHORT).show();
-                    fetchLastLocation();
-                }
-                break;
-        }
-    }
-
-
-    private void fetchLastLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]
-                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
-            return;
-        }
-        Task<Location> task = fusedLocationProviderClient.getLastLocation();
-        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                if (location != null){
-                    currentLocation = location;
-                    Toast.makeText(getApplicationContext(), currentLocation.getLatitude()
-                            +""+currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
 }

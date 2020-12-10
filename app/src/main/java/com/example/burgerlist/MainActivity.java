@@ -102,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("USERNAME",user_name);
         intent.putExtra("USER_ID",user_id);
         intent.putExtra("ISOWNER",isowner);
-        
         startActivity(intent);
 
     }
