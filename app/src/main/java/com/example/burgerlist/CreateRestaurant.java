@@ -40,8 +40,6 @@ public class CreateRestaurant extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_restaurant);
 
-        locationButton = (Button)findViewById(R.id.locationButton);
-        createRestButton = (Button)findViewById(R.id.createRestButton);
         phoneNum = (EditText)findViewById(R.id.phoneNum);
         RestName = (EditText)findViewById(R.id.RestName);
 
@@ -58,6 +56,7 @@ public class CreateRestaurant extends AppCompatActivity {
                 startActivity(locationSettings);
             }
         };
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{
@@ -76,6 +75,7 @@ public class CreateRestaurant extends AppCompatActivity {
         }
 
 
+        locationButton = (Button)findViewById(R.id.locationButton);
         locationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,6 +83,7 @@ public class CreateRestaurant extends AppCompatActivity {
             }
         });
 
+        createRestButton = (Button)findViewById(R.id.createRestButton);
         createRestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
