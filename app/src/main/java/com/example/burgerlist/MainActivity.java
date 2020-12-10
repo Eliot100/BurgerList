@@ -22,10 +22,10 @@ public class MainActivity extends AppCompatActivity {
     Button login_button;
     Button userPageButton;
     TextView welome_user;
-    String user_id = "";
-    String user_name="";
-    boolean isowner;
-    boolean isloggedin = false;
+    static String user_id = "";
+    static String user_name="";
+    static boolean isowner;
+    static boolean isloggedin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +59,25 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK){
+                Toast.makeText(getApplicationContext(),"works?", Toast.LENGTH_LONG).show();
+                user_id = data.getStringExtra("USER_ID");
+                isloggedin = data.getBooleanExtra("ISLOGGEDIN",false);
+                check_loggedin();
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //might be usefull later
+            }
+        }
+    }
+
+
     private void check_loggedin(){
-        Intent intent = getIntent();
-        user_id = intent.getStringExtra("USER_ID");
-        isloggedin = intent.getBooleanExtra("ISLOGGEDIN",false);
         // if logged in get username from db
         if(isloggedin == true){
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
@@ -86,25 +101,34 @@ public class MainActivity extends AppCompatActivity {
         }
         else{
             login_button.setVisibility(View.VISIBLE);
-
         }
-
     }
 
 
 
     private void start_Login() {
         Intent intent = new Intent(this, Login.class);
-        Toast.makeText(getApplicationContext(),"login", Toast.LENGTH_SHORT).show();
-        startActivity(intent);
+        startActivityForResult(intent,1);
+
     }
 
     private void start_MyPage() {
         Intent intent = new Intent(this, UserPage.class);
-        intent.putExtra("USERNAME",user_name);
-        intent.putExtra("USER_ID",user_id);
-        intent.putExtra("ISOWNER",isowner);
         startActivity(intent);
 
+    }
+
+    public static String get_user_id(){
+        return user_id;
+    }
+    public static String get_user_name(){
+        return user_name;
+    }
+    public static boolean get_isowner(){
+        return isowner;
+    }
+
+    public static boolean get_isloggedin() {
+        return isloggedin;
     }
 }

@@ -3,6 +3,7 @@ package com.example.burgerlist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
@@ -102,9 +103,11 @@ public class Login extends AppCompatActivity {
     }
 
     private void Go_to_main(FirebaseUser user){
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent();
         intent.putExtra("ISLOGGEDIN",true);
         intent.putExtra("USER_ID",user.getUid());
-        startActivity(intent);
+        setResult(Activity.RESULT_OK, intent);
+        finish();
+
     }
 }

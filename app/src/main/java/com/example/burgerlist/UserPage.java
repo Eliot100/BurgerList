@@ -25,6 +25,12 @@ public class UserPage extends AppCompatActivity {
         userRestButton = (Button)findViewById(R.id.userRestButton);
         CreateRestButton = (Button)findViewById(R.id.CreateRestButton);
 
+        CreateRestButton.setVisibility(View.GONE);
+        if(MainActivity.get_isowner() == true){
+            CreateRestButton.setVisibility(View.VISIBLE);
+        }
+
+
         userListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
