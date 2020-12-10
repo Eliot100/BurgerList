@@ -8,6 +8,7 @@ public class User {
     private String Email;
     private String Password;
     private boolean Owner;
+    private String restaurant_name;
 
     public User() {
     }
@@ -17,6 +18,7 @@ public class User {
         Password = Password;
         Username = username;
         Owner = owner;
+        restaurant_name = "0";
     }
 
     public User(User user) {
@@ -24,6 +26,15 @@ public class User {
         Password = user.getPassword();
         Username = user.getUsername();
         Owner = user.isOwner();
+        restaurant_name = user.restaurant_name;
+    }
+
+    public String getRestaurant_name() {
+        return restaurant_name;
+    }
+
+    public void setRestaurant_name(String restaurant_name) {
+        this.restaurant_name = restaurant_name;
     }
 
     public String getEmail() {

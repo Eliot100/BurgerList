@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     TextView welome_user;
     static String user_id = "";
     static String user_name="";
+    static String user_restaurant_name;
     static boolean isowner;
     static boolean isloggedin = false;
 
@@ -84,9 +85,9 @@ public class MainActivity extends AppCompatActivity {
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Toast.makeText(getApplicationContext(),snapshot.child("username").getValue().toString(), Toast.LENGTH_LONG).show();
                     user_name = snapshot.child("username").getValue().toString();
                     isowner = (boolean)snapshot.child("owner").getValue();
+                    user_restaurant_name = snapshot.child("restaurant_name").getValue().toString();
                     login_button.setVisibility(View.GONE);
                     welome_user.setText("Welcome "+user_name);
                     welome_user.setVisibility(View.VISIBLE);
@@ -131,4 +132,11 @@ public class MainActivity extends AppCompatActivity {
     public static boolean get_isloggedin() {
         return isloggedin;
     }
+    public static String get_user_restaurant_name(){
+        return user_restaurant_name;
+    }
+    public static void set_user_restaurant_name(String ress_name){
+        user_restaurant_name = ress_name;
+    }
+
 }

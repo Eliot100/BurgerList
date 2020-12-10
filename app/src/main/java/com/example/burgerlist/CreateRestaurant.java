@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -82,10 +83,12 @@ public class CreateRestaurant extends AppCompatActivity {
         createRestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    sendRestToDB();
-
+                if(sendRestToDB()){
                     returnToUserPage();
-
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "we are having trouble processing your request please try again.", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }
@@ -97,27 +100,29 @@ public class CreateRestaurant extends AppCompatActivity {
         return true; // for now all names are good
     }
         //Restaurant
-    private void sendRestToDB() {
+    private boolean sendRestToDB() {
         if(RestName.getText().toString().length()<4 || RestName.getText().toString().length()>50){
             Toast.makeText(getApplicationContext(), "Restaurant name must be between 2 to 50 characters", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         else if(Restcity.getText().toString().length()<2 || Restcity.getText().toString().length()>50){
             Toast.makeText(getApplicationContext(), "city name must be between 2 to 50 characters", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
         else if(!Patterns.PHONE.matcher(phoneNum.getText().toString()).matches()){
             Toast.makeText(getApplicationContext(), "Incorrect phone number", Toast.LENGTH_SHORT).show();
-            return;
+            return false;
         }
-        Intent intent = getIntent();
-        String owner_id = intent.getStringExtra("USER_ID");
+
+        String owner_id = MainActivity.get_user_id();
         LatLng latlng = new LatLng(150,150);// default currently does nothing.
         Restaurant ress = new Restaurant(owner_id,RestName.getText().toString(),phoneNum.getText().toString(),latlng);
         FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(getApplicationContext(), "succsefuly added restaurant to app", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "successfully added restaurant to app", Toast.LENGTH_LONG).show();
+
+
             }
         }); // added Restaurant to restaurants branch
         FirebaseDatabase.getInstance().getReference("City").child(Restcity.getText().toString()).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -125,18 +130,36 @@ public class CreateRestaurant extends AppCompatActivity {
             public void onComplete(@NonNull Task<Void> task) {
 
             }
+
         });//added Restaurant to cites branch
+        FirebaseDatabase.getInstance().getReference("Users").child(MainActivity.user_id).child("restaurant_name").setValue(RestName.getText().toString())
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
 
-
-
+            }
+        });
+        MainActivity.set_user_restaurant_name(RestName.getText().toString());
+        return true;
     }
 
     private void returnToUserPage() {
-        Intent resultIntent = new Intent(this, UserPage.class);
-        setResult(RESULT_CANCELED, resultIntent);
-        Toast.makeText(getApplicationContext(),"finish create restaurant", Toast.LENGTH_SHORT).show();
+        Intent resultIntent = new Intent();
+        setResult(Activity.RESULT_OK, resultIntent);
         finish();
     }
+
+
+
+
+
+
+
+
+
+
+
+
 
     // to do
     private void CreateRestLocation() {
