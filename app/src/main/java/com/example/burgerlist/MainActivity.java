@@ -53,12 +53,6 @@ public class MainActivity extends AppCompatActivity {
 
         check_loggedin();
 
-        //if user logged in
-        if(isloggedin == true){
-            login_button.setVisibility(View.GONE);
-            welome_user.setText("Welcome "+user_name);
-            welome_user.setVisibility(View.VISIBLE);
-        }
 
     }
 
@@ -66,15 +60,17 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = getIntent();
         user_id = intent.getStringExtra("USER_ID");
         isloggedin = intent.getBooleanExtra("ISLOGGEDIN",false);
-
-
-
+        // if logged in get username from db
         if(isloggedin == true){
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Toast.makeText(getApplicationContext(),snapshot.child("username").getValue().toString(), Toast.LENGTH_LONG).show();
+                    user_name = snapshot.child("username").getValue().toString();
+                    login_button.setVisibility(View.GONE);
+                    welome_user.setText("Welcome "+user_name);
+                    welome_user.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -82,7 +78,6 @@ public class MainActivity extends AppCompatActivity {
 
                 }
             });
-
         }
 
 
