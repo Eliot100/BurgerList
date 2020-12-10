@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -23,18 +24,18 @@ import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class CreateRestaurant extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     private static final int requestRestLoc = 100;
     private Button locationButton, createRestButton;
-    private EditText phoneNum, RestName, RestLat, RestLng;
+    private EditText phoneNum, RestName, RestLat, RestLng, Restcity, RestAddras;
     private Switch LocSwitch;
-   // private Boolean menualLocBool = !LocSwitch.isChecked();
-    private String visibilityMapLoc, visibilityManualLoc;
     private LatLng RestLocation;
     private FirebaseAuth mAuth;
 
@@ -45,173 +46,111 @@ public class CreateRestaurant extends AppCompatActivity {
 
         phoneNum = (EditText)findViewById(R.id.phoneNum);
         RestName = (EditText)findViewById(R.id.RestName);
+        Restcity = (EditText)findViewById(R.id.City_text);
+        RestAddras =(EditText)findViewById(R.id.street_text);
         RestLat = (EditText)findViewById(R.id.RestLat);
         RestLng = (EditText)findViewById(R.id.RestLng);
-//        LocSwitch = (Switch) findViewById(R.id.LocSwitch);
-//        LocSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if(LocSwitch.isChecked()){
-//                    RestLng.setVisibility(View.VISIBLE);
-//                    RestLat.setVisibility(View.VISIBLE);
-//                    locationButton.setVisibility(View.INVISIBLE);
-//                } else {
-//                    RestLng.setVisibility(View.INVISIBLE);
-//                    RestLat.setVisibility(View.INVISIBLE);
-//                    locationButton.setVisibility(View.VISIBLE);
-//                }
-//            }
-//        });
-//        locationButton = (Button)findViewById(R.id.locationButton);
-//        locationButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                CreateRestLocation();
-//            }
-//        });
-
+        LocSwitch = (Switch) findViewById(R.id.LocSwitch);
+        locationButton = (Button)findViewById(R.id.locationButton);
         createRestButton = (Button)findViewById(R.id.createRestButton);
+
+        // show or hide lat lon input text depending on user choise.
+        LocSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if(!LocSwitch.isChecked()){
+                    RestLng.setVisibility(View.VISIBLE);
+                    RestLat.setVisibility(View.VISIBLE);
+                    locationButton.setVisibility(View.INVISIBLE);
+                } else {
+                    RestLng.setVisibility(View.INVISIBLE);
+                    RestLat.setVisibility(View.INVISIBLE);
+                    locationButton.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+
+
+        // to do
+        locationButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CreateRestLocation();
+            }
+        });
+
+
         createRestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (RestaurantIsReady()) {
                     sendRestToDB();
-                    Toast.makeText(getApplicationContext(), "Set Restaurant in data base", Toast.LENGTH_SHORT).show();
-                    //returnToUserPage();
-                }
+
+                    returnToUserPage();
+
             }
         });
     }
 
 
-    private boolean RestaurantIsReady() {
-        try {
-            Integer.parseInt(phoneNum.getText().toString());
-        }catch (Exception e){
-            Toast.makeText(getApplicationContext(), "cant parse Int", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        if(RestLocation == null ) {
-            Toast.makeText(getApplicationContext(), "restaurant Location = null", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if(isLegal(RestName.getText().toString())) {
-            Toast.makeText(getApplicationContext(), "restaurant variables isn't right", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-        return true;
-    }
+
 
     private boolean isLegal(String restName) {
         return true; // for now all names are good
     }
-
+        //Restaurant
     private void sendRestToDB() {
-//        mAuth.createRestaurantWithUserId(RestaurantId RestaurantId)
-//             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-//                @Override
-//                public void onComplete(@NonNull Task<AuthResult> task) {
-//                    if(task.isSuccessful()){
-//                        Restaurant rest =  new Restaurant(RestName.getText().toString(),
-//                            phoneNum.getText().toString(), RestLocation.toString());
-//                        FirebaseDatabase.getInstance().getReference("Restaurants")
-//                            .child(FirebaseAuth.getInstance().getCurrentRestaurant().getUid())
-//                            .setValue(rest).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if (task.isSuccessful()) {
-//                                        Toast.makeText(CreateRestaurant.this,
-//                                                "The restaurant Created.",
-//                                                Toast.LENGTH_SHORT).show();
-//
-//                                        returnToUserPage();
-//                                    }
-//                                    else {
-//                                        Toast.makeText(CreateRestaurant.this,
-//                                                "failed to Created restaurant.",
-//                                                Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                            });
-//                    }
-//                    else {
-//                        Toast.makeText(CreateRestaurant.this, "failed to create the restaurant", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//             });
+        if(RestName.getText().toString().length()<4 || RestName.getText().toString().length()>50){
+            Toast.makeText(getApplicationContext(), "Restaurant name must be between 2 to 50 characters", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if(Restcity.getText().toString().length()<2 || Restcity.getText().toString().length()>50){
+            Toast.makeText(getApplicationContext(), "city name must be between 2 to 50 characters", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if(!Patterns.PHONE.matcher(phoneNum.getText().toString()).matches()){
+            Toast.makeText(getApplicationContext(), "Incorrect phone number", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intent = getIntent();
+        String owner_id = intent.getStringExtra("USER_ID");
+        LatLng latlng = new LatLng(150,150);// default currently does nothing.
+        Restaurant ress = new Restaurant(owner_id,RestName.getText().toString(),phoneNum.getText().toString(),latlng);
+        FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                Toast.makeText(getApplicationContext(), "succsefuly added restaurant to app", Toast.LENGTH_LONG).show();
+            }
+        }); // added Restaurant to restaurants branch
+        FirebaseDatabase.getInstance().getReference("City").child(Restcity.getText().toString()).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+
+            }
+        });//added Restaurant to cites branch
+
+
+
     }
 
     private void returnToUserPage() {
         Intent resultIntent = new Intent(this, UserPage.class);
-//        resultIntent.putExtra("RestID", "RestId");
         setResult(RESULT_CANCELED, resultIntent);
         Toast.makeText(getApplicationContext(),"finish create restaurant", Toast.LENGTH_SHORT).show();
         finish();
     }
 
+    // to do
     private void CreateRestLocation() {
-        Intent intentRestLoc = new Intent(this, GetMyRestaurantLocation.class);
-        try {
-            intentRestLoc.putExtra("currentLocation","150.0 150.0" );//currentLocation.toString()
-        } catch (Exception e){
-            Toast.makeText(getApplicationContext(),"can not set location", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        Toast.makeText(getApplicationContext(),"moving to get restaurant location", Toast.LENGTH_SHORT).show();
-        startActivityForResult(intentRestLoc, requestRestLoc);
-    }
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        Toast.makeText(getApplicationContext(), "onActivityResult : Getting rest loc", Toast.LENGTH_SHORT).show();
-//        switch (requestCode) {
-////        if(requestCode == 1){
-////            if(requestCode == RESULT_OK){
-////                RestLocation = new Location(data.getStringExtra("RestLocation"));
-////                Toast.makeText(getApplicationContext(),"The location is set", Toast.LENGTH_SHORT).show();
-////                return;
-////            }
-////
-//            case requestRestLoc:
-//                if (requestCode == this.RESULT_OK) {
-//                    RestLocation = new Location(data.getStringExtra("RestLocation"));
-//                    Toast.makeText(getApplicationContext(), "RestLocation: " + RestLocation.getLatitude()
-//                            + "" + RestLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//        }
-//        //error
-//    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        switch (requestCode){
-//            case REQUEST_CODE:
-//                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-//                    Toast.makeText(getApplicationContext(), "fetch Last Location", Toast.LENGTH_SHORT).show();
-//                    fetchLastLocation();
-//                }
-//                break;
-//        }
-//    }
-
-//
-//    private void fetchLastLocation() {
-//        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]
-//                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_CODE);
+//        Intent intentRestLoc = new Intent(this, GetMyRestaurantLocation.class);
+//        try {
+//            intentRestLoc.putExtra("currentLocation","150.0 150.0" );//currentLocation.toString()
+//        } catch (Exception e){
+//            Toast.makeText(getApplicationContext(),"can not set location", Toast.LENGTH_SHORT).show();
 //            return;
 //        }
-//        Task<Location> task = fusedLocationProviderClient.getLastLocation();
-//        task.addOnSuccessListener(new OnSuccessListener<Location>() {
-//            @Override
-//            public void onSuccess(Location location) {
-//                if (location != null){
-//                    currentLocation = location;
-//                    Toast.makeText(getApplicationContext(), currentLocation.getLatitude()
-//                            +""+currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-//    }
+//        Toast.makeText(getApplicationContext(),"moving to get restaurant location", Toast.LENGTH_SHORT).show();
+//        startActivityForResult(intentRestLoc, requestRestLoc);
+    }
+
+
 
 }

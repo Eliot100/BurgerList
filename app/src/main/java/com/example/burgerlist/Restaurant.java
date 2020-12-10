@@ -5,10 +5,10 @@ import com.google.android.gms.maps.model.LatLng;
 public class Restaurant {
 
     private String OwnerId, RestName;
-    private int PhoneNum;
+    private String PhoneNum;
     private LatLng RestLocation;
 
-    public Restaurant(String ownerId, String restName, int phoneNum, LatLng restLocation) {
+    public Restaurant(String ownerId, String restName, String phoneNum, LatLng restLocation) {
         OwnerId = ownerId;
         RestName = restName;
         PhoneNum = phoneNum;
@@ -37,7 +37,7 @@ public class Restaurant {
         return RestName;
     }
 
-    public int getPhone() {
+    public String getPhone() {
         return PhoneNum;
     }
 
