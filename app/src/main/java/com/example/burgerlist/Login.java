@@ -3,6 +3,7 @@ package com.example.burgerlist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +19,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.security.KeyStore;
 
@@ -80,7 +86,6 @@ public class Login extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = mAuth.getCurrentUser();
-                            Toast.makeText(getApplicationContext(),"Logged in", Toast.LENGTH_SHORT).show();
                             Go_to_main(user);
                         } else {
                             Toast.makeText(Login.this, "Authentication failed.",
@@ -97,11 +102,9 @@ public class Login extends AppCompatActivity {
     }
 
     private void Go_to_main(FirebaseUser user){
-        boolean IsloggedIn = true;
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("ISLOGGEDIN",IsloggedIn);
+        intent.putExtra("ISLOGGEDIN",true);
         intent.putExtra("USER_ID",user.getUid());
-
         startActivity(intent);
     }
 }
