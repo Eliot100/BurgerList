@@ -54,10 +54,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void start_MyPage() {
-        Intent intent = new Intent(this, my_page.class);
+        Intent intent = new Intent(this, UserPage.class);
 //        intent.putExtra("ISLOGGEDIN", isloggedin);
 //        intent.putExtra("USER_ID", user_id);
 //        Toast.makeText(getApplicationContext(), "my page", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(),"moving to User page", Toast.LENGTH_SHORT).show();
         startActivity(intent);
 
     }
