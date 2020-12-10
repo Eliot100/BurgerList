@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
     TextView welome_user;
     String user_id = "";
     String user_name="";
+    boolean isowner;
     boolean isloggedin = false;
 
     @Override
@@ -54,8 +56,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
     }
 
     private void check_loggedin(){
@@ -70,9 +70,11 @@ public class MainActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     Toast.makeText(getApplicationContext(),snapshot.child("username").getValue().toString(), Toast.LENGTH_LONG).show();
                     user_name = snapshot.child("username").getValue().toString();
+                    isowner = (boolean)snapshot.child("owner").getValue();
                     login_button.setVisibility(View.GONE);
                     welome_user.setText("Welcome "+user_name);
                     welome_user.setVisibility(View.VISIBLE);
+
                 }
 
                 @Override
@@ -85,15 +87,9 @@ public class MainActivity extends AppCompatActivity {
             login_button.setVisibility(View.VISIBLE);
         }
 
-
-
-
-
-
-
-
-
     }
+
+
 
     private void start_Login() {
         Intent intent = new Intent(this, Login.class);
@@ -103,7 +99,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void start_MyPage() {
         Intent intent = new Intent(this, UserPage.class);
-        Toast.makeText(getApplicationContext(),"moving to User page", Toast.LENGTH_SHORT).show();
+        intent.putExtra("USERNAME",user_name);
+        intent.putExtra("USER_ID",user_id);
+        intent.putExtra("ISOWNER",isowner);
+        
         startActivity(intent);
 
     }
