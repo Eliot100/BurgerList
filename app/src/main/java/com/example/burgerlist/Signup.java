@@ -51,9 +51,6 @@ public class Signup extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-
-
-
         //Assigning listeners
 
 
@@ -89,7 +86,6 @@ public class Signup extends AppCompatActivity {
             }
         });
 
-
     }
 
     // adds new user to database.
@@ -122,10 +118,6 @@ public class Signup extends AppCompatActivity {
                         }
                     }
                 });
-
-
-
-
     }
 
     private void Go_to_Login(){
@@ -133,7 +125,5 @@ public class Signup extends AppCompatActivity {
         setResult(Activity.RESULT_OK, intent);
         finish();
     }
-
-
 
 }

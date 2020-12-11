@@ -8,6 +8,10 @@ public class RestaurantRating {
     public RestaurantRating() {
     }
 
+    public int getSize(){
+        return ratings.size();
+    }
+
     public double getCurrentRating() {
         double currentRating = 0;
         for(Ret ret : this.ratings){

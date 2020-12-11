@@ -6,8 +6,7 @@ import java.io.Serializable;
 
 public class Restaurant implements Serializable {
 
-    private String OwnerId, RestName;
-    private String PhoneNum;
+    private String OwnerId, RestName, PhoneNum;
     private LatLng RestLocation;
     private RestaurantRating restRat;
 
@@ -16,6 +15,12 @@ public class Restaurant implements Serializable {
         RestName = restName;
         PhoneNum = phoneNum;
         RestLocation = restLocation;
+    }
+
+    public Restaurant(String ownerId, String restName, String phoneNum){
+        OwnerId = ownerId;
+        RestName = restName;
+        PhoneNum = phoneNum;
     }
 
     public double getCurrentRating() {
