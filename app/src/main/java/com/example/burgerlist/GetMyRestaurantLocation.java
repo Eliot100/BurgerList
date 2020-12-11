@@ -169,8 +169,6 @@ public class GetMyRestaurantLocation extends FragmentActivity implements OnMapRe
 //        });
 //    }
 //
-//
-//
 //    private void Return_Location() {
 //        Intent resultIntent = new Intent(this, CreateRestaurant.class);
 //        resultIntent.putExtra("RestLocation", currentLocation.toString());
