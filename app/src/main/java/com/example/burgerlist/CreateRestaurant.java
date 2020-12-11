@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -81,6 +83,15 @@ public class CreateRestaurant extends AppCompatActivity {
         });
 
 
+        Restcity.setOnTouchListener(new View.OnTouchListener() {
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                start_search();
+                return false;
+            }
+        });
+
         createRestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,6 +104,27 @@ public class CreateRestaurant extends AppCompatActivity {
             }
         });
     }
+
+    private void start_search(){
+        Intent intent = new Intent(this, Search.class);
+        startActivityForResult(intent,1);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1) {
+            if(resultCode == RESULT_OK){
+                Restcity.setText(data.getStringExtra("Search_Res"));
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //might be usefull later
+            }
+        }
+
+
+    }
+
 
 
 
