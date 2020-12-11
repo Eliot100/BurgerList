@@ -44,4 +44,5 @@ public class Restaurant {
     public LatLng getLocation() {
         return RestLocation;
     }
+
 }
