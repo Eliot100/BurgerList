@@ -24,8 +24,8 @@ public class MainActivity extends AppCompatActivity {
     TextView welome_user;
     static String user_id = "";
     static String user_name="";
-    static String user_restaurant_name;
-    static boolean isowner;
+    static String user_restaurant_name ;
+    static boolean isowner ;
     static boolean isloggedin = false;
 
     @Override
@@ -66,10 +66,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (requestCode == 1) {
             if(resultCode == RESULT_OK){
-                Toast.makeText(getApplicationContext(),"works?", Toast.LENGTH_LONG).show();
-                user_id = data.getStringExtra("USER_ID");
-                isloggedin = data.getBooleanExtra("ISLOGGEDIN",false);
-                check_loggedin();
+                    user_id = data.getStringExtra("USER_ID");
+                    isloggedin = data.getBooleanExtra("ISLOGGEDIN",false);
+                    check_loggedin();
             }
             if (resultCode == RESULT_CANCELED) {
                 //might be usefull later
@@ -85,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    user_name = snapshot.child("username").getValue().toString();
-                    isowner = (boolean)snapshot.child("owner").getValue();
-                    user_restaurant_name = snapshot.child("restaurant_name").getValue().toString();
-                    login_button.setVisibility(View.GONE);
-                    welome_user.setText("Welcome "+user_name);
-                    welome_user.setVisibility(View.VISIBLE);
-                    userPageButton.setVisibility(View.VISIBLE);
+                   user_name = snapshot.child("username").getValue().toString();
+                   isowner = (boolean)snapshot.child("owner").getValue();
+                   user_restaurant_name = snapshot.child("restaurant_name").getValue().toString();
+                   login_button.setVisibility(View.GONE);
+                   welome_user.setText("Welcome "+user_name);
+                   welome_user.setVisibility(View.VISIBLE);
+                   userPageButton.setVisibility(View.VISIBLE);
                 }
 
                 @Override
