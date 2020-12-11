@@ -56,7 +56,7 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
         double birthday = getItem(position).getAvg_rate();
 
         //Create the person object with the information
-        Restaurant r = new Restaurant(ownerId,restName,sex);
+        Restaurant r = new Restaurant(getOwnerId,name,PhoneNum);
 
         //create the view result for showing the animation
         final View result;
@@ -69,10 +69,8 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent, false);
             holder= new ViewHolder();
-            holder.name = (TextView) convertView.findViewById(R.id.textView1);
-            holder.birthday = (TextView) convertView.findViewById(R.id.textView2);
-            holder.sex = (TextView) convertView.findViewById(R.id.textView3);
-
+            holder.name = (TextView) convertView.findViewById(R.id.BurgerName);
+            holder.rate = (TextView) convertView.findViewById(R.id.Score);
             result = convertView;
 
             convertView.setTag(holder);
@@ -82,17 +80,8 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
             result = convertView;
         }
 
-
-        Animation animation = AnimationUtils.loadAnimation(mContext,
-                (position > lastPosition) ? R.anim.load_down_anim : R.anim.load_up_anim);
-        result.startAnimation(animation);
-        lastPosition = position;
-
-        holder.name.setText(person.getName());
-        holder.birthday.setText(person.getBirthday());
-        holder.sex.setText(person.getSex());
-
-
+        holder.name.setText(r.getName());
+        holder.rate.setText(String.valueOf(r.getAvg_rate()));
         return convertView;
     }
 }

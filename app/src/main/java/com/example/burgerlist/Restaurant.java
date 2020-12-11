@@ -17,6 +17,14 @@ public class Restaurant {
         avg_rate = 0.0;
     }
 
+    public Restaurant(String ownerId, String restName, String phoneNum) {
+        OwnerId = ownerId;
+        RestName = restName;
+        PhoneNum = phoneNum;
+        RestLocation = null;
+        avg_rate = 0.0;
+    }
+
     public Restaurant(Restaurant rest) {
         OwnerId = rest.OwnerId;
         RestName = rest.RestName;
