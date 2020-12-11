@@ -1,52 +1,39 @@
 package com.example.burgerlist;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class RestaurantRating {
-
-    private String restaurant_name;
-    private String owner_uid;
-    private ArrayList<Double> ratings ;
-    private double current_rating;
+    private List<Ret> ratings;
 
     public RestaurantRating() {
     }
-    public RestaurantRating(String restaurant_name,String owner_uid) {
-        ratings = new ArrayList<Double>();
-        restaurant_name = restaurant_name;
-        owner_uid = owner_uid;
+
+    public double getCurrentRating() {
+        double currentRating = 0;
+        for(Ret ret : this.ratings){
+            currentRating += ret.retValue;
+        }
+        return (currentRating/this.ratings.size());
     }
 
-    public double getCurrent_rating() {
-        return current_rating;
+    public double getRat(String userId) {
+        for(Ret ret : this.ratings){
+            if (ret.userId.equals(userId))
+                return ret.retValue;
+        }
+        return -1;
     }
 
-
-    public void calculate_ratings(){
-        // later
-    }
-    public void rate(double rating){
-        ratings.add(rating);
-    }
-
-    public String getRestaurant_name() {
-        return restaurant_name;
+    public boolean isRated(String userId) {
+        for(Ret ret : this.ratings){
+            if (ret.userId.equals(userId))
+                return true;
+        }
+        return false;
     }
 
-    public void setRestaurant_name(String restaurant_name) {
-        this.restaurant_name = restaurant_name;
+    private class Ret {
+        String userId;
+        double retValue;
     }
-
-    public String getOwner_uid() {
-        return owner_uid;
-    }
-
-    public void setOwner_uid(String owner_uid) {
-        this.owner_uid = owner_uid;
-    }
-
-    public ArrayList<Double> getRatings() {
-        return ratings;
-    }
-
 }
