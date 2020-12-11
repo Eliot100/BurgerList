@@ -55,6 +55,7 @@ public class CreateRestaurant extends AppCompatActivity {
         locationButton = (Button)findViewById(R.id.locationButton);
         createRestButton = (Button)findViewById(R.id.createRestButton);
 
+
         // show or hide lat lon input text depending on user choise.
         LocSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -125,7 +126,7 @@ public class CreateRestaurant extends AppCompatActivity {
 
             }
         }); // added Restaurant to restaurants branch
-        FirebaseDatabase.getInstance().getReference("City").child(Restcity.getText().toString()).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
+        FirebaseDatabase.getInstance().getReference("City").child(Restcity.getText().toString()).child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
 

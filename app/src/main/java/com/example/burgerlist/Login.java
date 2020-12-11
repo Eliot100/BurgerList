@@ -98,7 +98,7 @@ public class Login extends AppCompatActivity {
 
     private void sign_up_screen(){
         Intent intent = new Intent(this, Signup.class);
-        startActivity(intent);
+        startActivityForResult(intent,3);
 
     }
 
@@ -110,4 +110,19 @@ public class Login extends AppCompatActivity {
         finish();
 
     }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 3) {
+            if(resultCode == RESULT_OK){
+                //might be usefull later
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //might be usefull later
+            }
+        }
+    }
+
+
+
 }

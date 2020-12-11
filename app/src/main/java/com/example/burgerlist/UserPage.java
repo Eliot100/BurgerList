@@ -1,6 +1,5 @@
 package com.example.burgerlist;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -22,10 +21,11 @@ public class UserPage extends AppCompatActivity {
         setContentView(R.layout.activity_my_page);
 
         userListButton = (Button)findViewById(R.id.userListButton);
-        userRestButton = (Button)findViewById(R.id.userRestButton);
+        userRestButton = (Button)findViewById(R.id.MyRessButton);
         CreateRestButton = (Button)findViewById(R.id.CreateRestButton);
 
         CreateRestButton.setVisibility(View.GONE);
+        userRestButton.setVisibility(View.GONE);
 
         update_ui();
 
@@ -77,6 +77,7 @@ public class UserPage extends AppCompatActivity {
         if (requestCode == 4) {
             if(resultCode == RESULT_OK){
                 CreateRestButton.setVisibility(View.GONE);
+                userRestButton.setVisibility(View.VISIBLE);
             }
             if (resultCode == RESULT_CANCELED) {
                 //might be usefull later
@@ -88,6 +89,9 @@ public class UserPage extends AppCompatActivity {
         if(MainActivity.get_isowner() == true){
             if(MainActivity.get_user_restaurant_name().equals("0") == true) {
                 CreateRestButton.setVisibility(View.VISIBLE);
+            }
+            else {// owner with a restaurant
+                userRestButton.setVisibility(View.VISIBLE);
             }
         }
         else{
