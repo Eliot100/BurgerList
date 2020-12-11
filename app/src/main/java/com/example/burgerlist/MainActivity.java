@@ -21,6 +21,7 @@ import com.google.firebase.database.ValueEventListener;
 public class MainActivity extends AppCompatActivity {
     Button login_button;
     Button userPageButton;
+    Button search_button;
     TextView welome_user;
     static String user_id = "";
     static String user_name="";
@@ -35,6 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
         login_button = (Button)findViewById(R.id.login_button);
         userPageButton = (Button)findViewById(R.id.userPageButton);
+        search_button =(Button)findViewById(R.id.search_button);
         welome_user = (TextView)findViewById(R.id.user_welcom_text);
 
 
@@ -57,6 +59,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        search_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { start_Search();}
+        });
+
 
     }
 
@@ -73,6 +80,12 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode == RESULT_CANCELED) {
                 //might be usefull later
             }
+        }
+        else if (requestCode == 5){
+            if(resultCode == RESULT_OK){
+                // search resault here
+            }
+
         }
     }
 
@@ -115,6 +128,12 @@ public class MainActivity extends AppCompatActivity {
     private void start_MyPage() {
         Intent intent = new Intent(this, UserPage.class);
         startActivity(intent);
+
+    }
+
+    private void start_Search(){
+        Intent intent = new Intent(this, Search.class);
+        startActivityForResult(intent,5);
 
     }
 

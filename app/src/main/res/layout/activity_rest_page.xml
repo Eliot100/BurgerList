@@ -7,10 +7,10 @@
     tools:context=".RestPage">
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/RestaurantTitle_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="4dp"
         android:text="My Restaurant"
         android:textSize="36sp"
         app:layout_constraintEnd_toEndOf="parent"
