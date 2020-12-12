@@ -1,7 +1,6 @@
 package com.example.burgerlist;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class RestaurantRating {
     private ArrayList<Ret> ratings;

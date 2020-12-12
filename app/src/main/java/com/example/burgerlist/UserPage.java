@@ -29,7 +29,6 @@ public class UserPage extends AppCompatActivity {
 
         update_ui();
 
-
         userListButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
