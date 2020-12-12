@@ -8,8 +8,20 @@ public class RestaurantRating {
     public RestaurantRating() {
     }
 
-    public int getSize(){
+    public int getSize() {
         return ratings.size();
+    }
+
+    public void addRet(String userId, double retValue){
+        if (isRated(userId)) {
+            for(Ret ret : this.ratings){
+                if (ret.userId.equals(userId)) {
+                    ret.retValue = retValue;
+                    return;
+                }
+            }
+        }
+        this.ratings.add(new Ret(userId, retValue));
     }
 
     public double getCurrentRating() {
@@ -37,7 +49,30 @@ public class RestaurantRating {
     }
 
     private class Ret {
-        String userId;
-        double retValue;
+        private String userId;
+        private double retValue;
+
+        public Ret(){}
+
+        public Ret(String userId, double retValue){
+            this.userId = userId;
+            this.retValue = retValue;
+        }
+
+        public String getUserId() {
+            return userId;
+        }
+
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+
+        public double getRetValue() {
+            return retValue;
+        }
+
+        public void setRetValue(double retValue) {
+            this.retValue = retValue;
+        }
     }
 }
