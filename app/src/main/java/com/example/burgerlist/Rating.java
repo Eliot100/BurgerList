@@ -1,44 +1,32 @@
 package com.example.burgerlist;
 
-import java.util.ArrayList;
-
 public class Rating {
-    private String owner_uid;
-    private double rate ;
-    private String burger_uid;
+    Restaurant ress;
+    double retValue;
 
-    public Rating() {
+    public Rating(Restaurant ress, double rating) {
+        this.ress = ress;
+        this.retValue = rating;
     }
-    public Rating(String owner_uid,double rate, String burger_uid) {
-        this.owner_uid = owner_uid;
-        this.rate = rate;
-        this.burger_uid = burger_uid;
+    public Rating(Rating rate) {
+        this.ress = rate.ress;
+        this.retValue = rate.retValue;
     }
-
-    public String getOwner() {
-        return this.owner_uid;
-    }
-
-    public double getRate() {
-        return this.rate;
+    public Restaurant getRess() {
+        return this.ress;
     }
 
-    public String getBurger() {
-        return this.burger_uid;
+    public void setRess(Restaurant ress) {
+        this.ress = ress;
     }
 
-    public void setOwner(String owner_uid) {
-        this.owner_uid = owner_uid;
+    public double getRetValue() {
+        return retValue;
     }
 
-    public void setRate(double rate) {
-        this.rate = rate;
-    }
-
-    public void setBurger(String burger_uid) {
-        this.burger_uid = burger_uid;
+    public void setRetValue(double retValue) {
+        this.retValue = retValue;
     }
 
 
 }
-

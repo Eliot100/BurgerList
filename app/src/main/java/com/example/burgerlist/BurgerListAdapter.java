@@ -18,7 +18,7 @@ import java.util.List;
  * Created by User on 3/14/2017.
  */
 
-public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
+public class BurgerListAdapter extends ArrayAdapter<Rating> {
 
     private static final String TAG = "PersonListAdapter";
 
@@ -40,7 +40,7 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
      * @param resource
      * @param objects
      */
-    public BurgerListAdapter(Context context, int resource, ArrayList<Restaurant> objects) {
+    public BurgerListAdapter(Context context, int resource, ArrayList<Rating> objects) {
         super(context, resource, objects);
         mContext = context;
         mResource = resource;
@@ -50,13 +50,11 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //get the persons information
-        String getOwnerId = getItem(position).getOwnerId();
-        String name = getItem(position).getName();
-        String PhoneNum = getItem(position).getPhone();
-        double rate = 9;
+        String name = getItem(position).getRess().getName();
+        double rate = getItem(position).getRetValue();
 
         //Create the person object with the information
-        Restaurant r = new Restaurant(getOwnerId,name,PhoneNum);
+        RatingPreview r = new RatingPreview(name ,rate);
 
         //create the view result for showing the animation
         final View result;
@@ -80,7 +78,7 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
             result = convertView;
         }
 
-        holder.name.setText(r.getName());
+        holder.name.setText(r.getResName());
         holder.rate.setText(String.valueOf(rate));
         return convertView;
     }
