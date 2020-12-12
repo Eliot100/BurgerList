@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -73,7 +74,18 @@ public class RestPage extends AppCompatActivity {
 
 
 
+        ListView mListView = (ListView) findViewById(R.id.MyListVisit);
 
+        //MyRatedRestaurant m = new MyRatedRestaurant();
+        //m.setUserId("Yali_KING");
+        //m.add_rating(new Restaurant("dori","baladi","050-1234567"),7);
+        //m.add_rating(new Restaurant("moshe","habad202020","050-5555567"),9);
+
+        ArrayList<Rating> ratings = new ArrayList<>();
+        //.add(new Rating(m.get(0)));
+        //.add(new Rating(m.get(1)));
+        BurgerListAdapter adapter = new BurgerListAdapter(this, R.layout.adapter_view_layout, ratings);
+        mListView.setAdapter(adapter);
 
 
 
