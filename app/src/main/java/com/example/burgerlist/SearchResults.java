@@ -3,7 +3,10 @@ package com.example.burgerlist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,12 +29,12 @@ public class SearchResults extends AppCompatActivity {
     private String currentRating;
     private ArrayList<Rating> ratings;
     private ListView mListView;
+    private String rest_id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_results);
-
         ratings = new ArrayList<Rating>();
         mListView = (ListView) findViewById(R.id.Search_ress);
 
@@ -42,17 +45,26 @@ public class SearchResults extends AppCompatActivity {
         read_ress();
 
 
-
-
-
-
-
-
     }
 
     public void display(){
+
         BurgerListAdapter adapter = new BurgerListAdapter(this, R.layout.adapter_view_layout, ratings);
         mListView.setAdapter(adapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                rest_id = ratings.get(position).getRess().getOwnerId().toString();
+                go_to_rest_page(rest_id);
+            }
+        });
+    }
+
+    public void go_to_rest_page(String rest_id){
+        Intent intent = new Intent(this, RestPage.class);
+        intent.putExtra("Owner_id", rest_id);
+        startActivityForResult(intent,7);
     }
 
     public void read_ress(){
@@ -70,10 +82,8 @@ public class SearchResults extends AppCompatActivity {
                 }
                 display();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
         });
     }
