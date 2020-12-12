@@ -64,9 +64,9 @@
 
 
             <ListView
-                android:id="@+id/MyListVisit"
+                android:id="@+id/menu_listview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="198dp"
                 tools:layout_editor_absoluteX="33dp"
                 tools:layout_editor_absoluteY="38dp" />
         </RelativeLayout>
@@ -121,7 +121,7 @@
             <ListView
                 android:id="@+id/comment_listview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="247dp"
                 tools:layout_editor_absoluteX="33dp"
                 tools:layout_editor_absoluteY="38dp" />
         </RelativeLayout>

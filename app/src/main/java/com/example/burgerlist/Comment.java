@@ -9,26 +9,26 @@ import java.util.Date;
 
 public class Comment {
     private String userId; // the user that sent the message
-    private String ress; // the restaurant the got the comment
+    private String name; // the restaurant the got the comment
     private String message;
     private String date;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    public Comment(String userId, String ress, String message, String date) {
+   // @RequiresApi(api = Build.VERSION_CODES.O)
+    public Comment(String userId, String name, String message, String date) {
         this.userId = userId;
-        this.ress = ress;
+        this.name = name;
         this.message = message;
         this.date = date;
     }
-    public Comment(String userId, String ress, String message) {
+    public Comment(String userId, String name, String message) {
         this.userId = userId;
-        this.ress = ress;
+        this.name = name;
         this.message = message;
         this.date = java.util.Calendar.getInstance().getTime().toString();
     }
     public Comment(Comment comment) {
         this.userId = new String(comment.userId);
-        this.ress = new String(comment.ress);
+        this.name = new String(comment.name);
         this.message = new String(comment.message);
         this.date = new String(comment.date);
 
@@ -41,12 +41,12 @@ public class Comment {
         this.userId = userId;
     }
 
-    public String getRess() {
-        return this.ress;
+    public String getName() {
+        return this.name;
     }
 
-    public void setRess(String ress) {
-        this.ress = ress;
+    public void settName(String ress) {
+        this.name = name;
     }
 
     public String getMessage() {
