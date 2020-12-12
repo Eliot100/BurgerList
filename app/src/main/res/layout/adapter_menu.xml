@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/titel_text"
+        android:layout_width="match_parent"
+        android:layout_height="65dp"
+        android:text="TextView"
+        android:autoSizeTextType="uniform" />
+
+    <LinearLayout
+        android:id="@+id/productItems"
+        android:layout_width="match_parent"
+        android:layout_height="670dp"
+        android:orientation="vertical"></LinearLayout>
+</LinearLayout>
