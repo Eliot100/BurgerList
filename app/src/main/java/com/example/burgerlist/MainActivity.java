@@ -19,13 +19,13 @@ import com.google.firebase.database.ValueEventListener;
 
 
 public class MainActivity extends AppCompatActivity {
-    Button login_button;
+    Button login_button, logout_button;
     Button userPageButton;
     Button search_button;
     TextView welome_user;
     static String user_id = "";
-    static String user_name="";
-    static String user_restaurant_name ;
+    static String user_name = "guest";
+    static String user_restaurant_name;
     static boolean isowner ;
     static boolean isloggedin = false;
 
@@ -35,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         login_button = (Button)findViewById(R.id.login_button);
+        logout_button = (Button)findViewById(R.id.logout_button);
         userPageButton = (Button)findViewById(R.id.userPageButton);
         search_button =(Button)findViewById(R.id.search_button);
         welome_user = (TextView)findViewById(R.id.user_welcom_text);
-
 
         welome_user.setVisibility(View.GONE);
         login_button.setVisibility(View.GONE);
@@ -49,6 +49,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 start_Login();
+            }
+        });
+
+        logout_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user_id = "";
+                user_name = "guest";
+                user_restaurant_name = "";
+                login_button.setVisibility(View.VISIBLE);
+                logout_button.setVisibility(View.GONE);
             }
         });
 
@@ -101,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     isowner = (boolean)snapshot.child("owner").getValue();
                     user_restaurant_name = snapshot.child("restaurant_name").getValue().toString();
                     login_button.setVisibility(View.GONE);
+                    logout_button.setVisibility(View.VISIBLE);
                     welome_user.setText("Welcome "+user_name);
                     welome_user.setVisibility(View.VISIBLE);
                     userPageButton.setVisibility(View.VISIBLE);
