@@ -9,7 +9,7 @@ public class Rating {
 
     public Rating() {
     }
-    public Rating(String owner_uid,double rate,String burger_uid) {
+    public Rating(String owner_uid,double rate, String burger_uid) {
         this.owner_uid = owner_uid;
         this.rate = rate;
         this.burger_uid = burger_uid;
@@ -26,7 +26,6 @@ public class Rating {
     public String getBurger() {
         return this.burger_uid;
     }
-
 
     public void setOwner(String owner_uid) {
         this.owner_uid = owner_uid;

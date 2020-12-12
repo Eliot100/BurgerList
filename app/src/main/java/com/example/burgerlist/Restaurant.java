@@ -3,9 +3,11 @@ package com.example.burgerlist;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
-
+/*
+*
+*
+**/
 public class Restaurant implements Serializable {
-
     private String OwnerId, RestName, PhoneNum;
     private LatLng RestLocation;
     private RestaurantRating restRat;
@@ -15,12 +17,15 @@ public class Restaurant implements Serializable {
         RestName = restName;
         PhoneNum = phoneNum;
         RestLocation = restLocation;
+        restRat = new RestaurantRating();
     }
 
     public Restaurant(String ownerId, String restName, String phoneNum){
         OwnerId = ownerId;
         RestName = restName;
         PhoneNum = phoneNum;
+        RestLocation = new LatLng(-1, -1);
+        restRat = new RestaurantRating();
     }
 
     public double getCurrentRating() {
@@ -32,6 +37,7 @@ public class Restaurant implements Serializable {
         RestName = rest.RestName;
         PhoneNum = rest.PhoneNum;
         RestLocation = rest.RestLocation;
+        restRat = rest.restRat;
     }
 
     public RestaurantRating getRestRat() {
@@ -40,6 +46,10 @@ public class Restaurant implements Serializable {
 
     public void setRestRat(RestaurantRating restRat) {
         this.restRat = restRat;
+    }
+
+    public void AddRat(String userId, double retValue) {
+        this.restRat.addRet(userId, retValue);
     }
 
     public String toString() {
