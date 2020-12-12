@@ -82,13 +82,15 @@ public class RestPage extends AppCompatActivity {
 
 
 
-        ListView mListView = (ListView) findViewById(R.id.MyListVisit);
+        ListView mListView = (ListView) findViewById(R.id.comment_listview);
 
 
 
-        ArrayList<Rating> ratings = new ArrayList<>();
+        ArrayList<Comment> comments = new ArrayList<>();
+        comments.add(new Comment("dodo","popo","fuck me"));
+        comments.add(new Comment("dodoladodo","popolapopo","fuck me la fuck"));
 
-        BurgerListAdapter adapter = new BurgerListAdapter(this, R.layout.adapter_view_layout, ratings);
+        CommentListAdapter adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, comments);
         mListView.setAdapter(adapter);
 
 
