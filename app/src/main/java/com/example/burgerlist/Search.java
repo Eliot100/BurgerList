@@ -74,7 +74,7 @@ public class Search extends AppCompatActivity {
                 filterd_list.clear();
                 for (int i = 0 ; i < adapter.getCount() ; i++){
                     filterd_list.add(adapter.getItem(i).toString());
-                    //Toast.makeText(getApplicationContext(),filterd_list.get(i), Toast.LENGTH_SHORT).show();
+
                 }
                 if (from_creat_ress) {
                     Toast.makeText(getApplicationContext(),filterd_list.get(position), Toast.LENGTH_SHORT).show();
