@@ -55,14 +55,14 @@ public class RestPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rest_page);
         //initializing variable
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
+
+
         phone_btn = (ImageButton)findViewById(R.id.phone_button);
         map_btn = (ImageButton)findViewById(R.id.google_map);
         addcomment_btn = (Button)findViewById(R.id.addComent_button);
         comment_text = (EditText)findViewById(R.id.addcomment_text);
         ratingscore_text = (TextView)findViewById(R.id.currentReating_text);
-        //workinghours_text = (TextView)findViewById(R.id.workinghours_text);
+        workinghours_text = (TextView)findViewById(R.id.workinghours_text);
         menu_scrollview = (ScrollView)findViewById(R.id.menu_scrollview);
         comment_scrollview = (ScrollView)findViewById(R.id.comment_scrollview);
         restname_title = (TextView)findViewById(R.id.restName_text);
@@ -70,7 +70,13 @@ public class RestPage extends AppCompatActivity {
 
 
 
-        // getting data from data base.
+
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
+
+
+
+
         get_rest_data();
 
 
