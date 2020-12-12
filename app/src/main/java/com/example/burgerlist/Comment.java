@@ -13,7 +13,7 @@ public class Comment {
     private String message;
     private String date;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
+   // @RequiresApi(api = Build.VERSION_CODES.O)
     public Comment(String userId, String name, String message, String date) {
         this.userId = userId;
         this.name = name;

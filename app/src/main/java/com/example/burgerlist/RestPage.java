@@ -42,8 +42,16 @@ public class RestPage extends AppCompatActivity {
     private TextView restname_title;
     private ScrollView menu_scrollview;
     private ScrollView comment_scrollview;
+    private ListView mListView;
 
-    private ArrayList<String> rest_comments;
+    private ArrayList<Comment> rest_comments;
+
+
+
+    private String timeofmessege;
+    private String messege;
+    private String user_name;
+    private String user_id;
 
 
     private FirebaseDatabase database;
@@ -68,7 +76,8 @@ public class RestPage extends AppCompatActivity {
         restname_title = (TextView)findViewById(R.id.restName_text);
         addtolist_btn = (Button)findViewById(R.id.addtolist_btn);
 
-
+        mListView = (ListView) findViewById(R.id.comment_listview);
+        rest_comments = new ArrayList<Comment>();
 
 
         database = FirebaseDatabase.getInstance();
@@ -82,19 +91,23 @@ public class RestPage extends AppCompatActivity {
 
 
 
-        ListView mListView = (ListView) findViewById(R.id.comment_listview);
 
 
 
-        ArrayList<Comment> comments = new ArrayList<>();
-        comments.add(new Comment("dodo","popo","fuck me"));
-        comments.add(new Comment("dodoladodo","popolapopo","fuck me la fuck"));
 
-        CommentListAdapter adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, comments);
+
+
+
+
+
+
+
+    }
+
+
+    public void  display(){
+        CommentListAdapter adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);
         mListView.setAdapter(adapter);
-
-
-
     }
 
     private void get_rest_data(){
@@ -108,7 +121,7 @@ public class RestPage extends AppCompatActivity {
 
                 check_user_is_owner();
                 check_user_loggeding();
-                //get_comments();
+                get_comments();
                 update_page();
             }
 
@@ -164,33 +177,26 @@ public class RestPage extends AppCompatActivity {
 
     }
 
-//    public void get_comments(){
-//        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants").child("Comments");
-//        comref.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                for(DataSnapshot keynode : snapshot.getChildren()){
-//                    timeofmessege = keynode.child("date").getValue().toString();
-//                    messege =  keynode.child("message").getValue().toString();
-//                    user_name = keynode.child("user").getValue().toString();
-//
-//                    Restaurant ress =  new Restaurant(owner_id,name,phone);
-//                    Rating ret =  new Rating(ress,Double.parseDouble(currentRating));
-//                    ratings.add(ret);
-//                }
-//                display();
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//            }
-//        });
-//    }
-
-
-
-
-
-
+    public void get_comments(){
+        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id).child("Comments");
+        comref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot keynode : snapshot.getChildren()){
+                    timeofmessege = keynode.child("date").getValue().toString();
+                    messege =  keynode.child("message").getValue().toString();
+                    user_name = keynode.child("name").getValue().toString();
+                    user_id = keynode.child("user").getValue().toString();
+                    Comment com = new Comment(user_id,user_name,messege,timeofmessege);
+                    rest_comments.add(com);
+                }
+                display();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
 
 
     private void check_user_is_owner(){
