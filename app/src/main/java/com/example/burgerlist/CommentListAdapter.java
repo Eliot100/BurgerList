@@ -32,8 +32,8 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
      * Holds variables in a View
      */
     private static class ViewHolder {
+        TextView userId;
         TextView username;
-        TextView restaurant;
         TextView message;
         TextView date;
     }
@@ -55,13 +55,11 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //get the persons information
-        String username = getItem(position).getUser();
-        String restaurant = getItem(position).getRess();
+        String username = getItem(position).getName();
         String message = getItem(position).getMessage();
         String date = getItem(position).getDate();
 
         //Create the person object with the information
-        Comment c = new Comment(username ,restaurant,message,date);
 
         //create the view result for showing the animation
         final View result;
