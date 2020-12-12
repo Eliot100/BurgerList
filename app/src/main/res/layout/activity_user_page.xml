@@ -8,58 +8,151 @@
 
     <TextView
         android:id="@+id/userPage"
-        android:layout_width="172dp"
-        android:layout_height="72dp"
-        android:text="my page"
+        android:layout_width="195dp"
+        android:layout_height="74dp"
+        android:text="uesr name"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.933"
+        app:layout_constraintHorizontal_bias="0.125"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.063" />
-
-    <Button
-        android:id="@+id/CreateRestButton"
-        android:layout_width="166dp"
-        android:layout_height="55dp"
-        android:autoSizeTextType="uniform"
-        android:text="create restaurant"
-        android:visibility="visible"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/userPage"
-        app:layout_constraintHorizontal_bias="0.263"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userListButton"
-        app:layout_constraintVertical_bias="0.028" />
+        app:layout_constraintVertical_bias="0.024" />
 
     <Button
         android:id="@+id/userListButton"
         android:layout_width="170dp"
-        android:layout_height="64dp"
-        android:text="My List"
-        app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/userPage"
-        app:layout_constraintHorizontal_bias="0.207"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.062" />
-
-    <Button
-        android:id="@+id/MyRessButton"
-        android:layout_width="165dp"
-        android:layout_height="60dp"
-        android:text="My Restaurant"
-        android:visibility="visible"
+        android:layout_height="50dp"
+        android:text="user list"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.065"
+        app:layout_constraintHorizontal_bias="0.368"
+        app:layout_constraintStart_toEndOf="@+id/userPage"
+        app:layout_constraintTop_toBottomOf="@+id/userImage"
+        app:layout_constraintVertical_bias="0.025" />
+
+    <Button
+        android:id="@+id/userRessButton"
+        android:layout_width="195dp"
+        android:layout_height="70dp"
+        android:text="user Restaurant"
+        android:visibility="visible"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/userImage"
+        app:layout_constraintHorizontal_bias="0.656"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/userListButton"
-        app:layout_constraintVertical_bias="0.021" />
+        app:layout_constraintTop_toTopOf="@+id/createRestButton"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/createRestButton"
+        android:layout_width="195dp"
+        android:layout_height="70dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="16dp"
+        android:autoSizeTextType="uniform"
+        android:text="create restaurant"
+        android:visibility="visible"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toStartOf="@+id/userImage"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userPage" />
+
+    <ImageView
+        android:id="@+id/userImage"
+        android:layout_width="170dp"
+        android:layout_height="152dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/userPage"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:srcCompat="@tools:sample/avatars" />
+
+    <ScrollView
+        android:id="@+id/userComents_ScrollView"
+        android:layout_width="394dp"
+        android:layout_height="345dp"
+        android:layout_marginBottom="72dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <ListView
+                android:id="@+id/MyListVisit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteX="33dp"
+                tools:layout_editor_absoluteY="38dp" />
+        </RelativeLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/addComentBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="114dp"
+        android:layout_marginBottom="8dp"
+        android:text="add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.923"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName"
+        android:layout_width="255dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:ems="10"
+        android:hint="add a coment"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/userComents_ScrollView"
+        android:layout_width="87dp"
+        android:layout_height="32dp"
+        android:text="TextView"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="259dp" />
+
+    <TextView
+        android:id="@+id/reviews_text"
+        android:layout_width="102dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="58dp"
+        android:text="Reviews: "
+        app:layout_constraintBottom_toTopOf="@+id/userComents_ScrollView"
+        app:layout_constraintEnd_toStartOf="@+id/userImage"
+        app:layout_constraintHorizontal_bias="0.029"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userRessButton"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/numReviews_text"
+        android:layout_width="77dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="12dp"
+        android:text="rewiew number"
+        app:layout_constraintEnd_toStartOf="@+id/userListButton"
+        app:layout_constraintTop_toBottomOf="@+id/userRessButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,6 +6,24 @@
     android:layout_height="match_parent"
     tools:context=".RestPage">
 
+    <Button
+        android:id="@+id/addComentBtn2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="add"
+        tools:layout_editor_absoluteX="307dp"
+        tools:layout_editor_absoluteY="345dp" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName2"
+        android:layout_width="278dp"
+        android:layout_height="48dp"
+        android:ems="10"
+        android:hint="add a coment"
+        android:inputType="textPersonName"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="345dp" />
+
     <TextView
         android:id="@+id/restName_text"
         android:layout_width="200dp"
@@ -21,17 +39,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ScrollView
-        android:id="@+id/menuScrollView"
+        android:id="@+id/restComents_ScrollView"
         android:layout_width="391dp"
         android:layout_height="269dp"
-        android:layout_marginTop="1dp"
         android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toTopOf="@+id/currentReating_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.324"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/restComents_text"
-        app:layout_constraintVertical_bias="0.32">
+        app:layout_constraintStart_toStartOf="parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -47,19 +62,8 @@
         </RelativeLayout>
     </ScrollView>
 
-    <TextView
-        android:id="@+id/restComents_text"
-        android:layout_width="160dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="220dp"
-        android:text="Restaurant coments"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.032"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/workingHoers_text" />
-
     <ScrollView
-        android:id="@+id/menuScrollView"
+        android:id="@+id/restComents_ScrollView"
         android:layout_width="386dp"
         android:layout_height="198dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -67,10 +71,18 @@
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="139dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_height="match_parent">
+
+
+            <ListView
+                android:id="@+id/MyListVisit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:layout_editor_absoluteX="33dp"
+                tools:layout_editor_absoluteY="38dp" />
+        </RelativeLayout>
     </ScrollView>
 
     <ImageButton
