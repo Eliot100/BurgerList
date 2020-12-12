@@ -53,6 +53,7 @@ public class RestPage extends AppCompatActivity {
 
 
 
+
     private String timeofmessege;
     private String messege;
     private String user_name;
@@ -63,6 +64,7 @@ public class RestPage extends AppCompatActivity {
     private DatabaseReference ref;
 
     private CommentListAdapter adapter;
+    private CommentListAdapter adapter2;
 
 
     @Override
@@ -85,6 +87,7 @@ public class RestPage extends AppCompatActivity {
 
         mListView = (ListView) findViewById(R.id.comment_listview);
         rest_comments = new ArrayList<Comment>();
+
 
 
         database = FirebaseDatabase.getInstance();
