@@ -40,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
         search_button =(Button)findViewById(R.id.search_button);
         welome_user = (TextView)findViewById(R.id.user_welcom_text);
 
-        welome_user.setVisibility(View.GONE);
+
+        welome_user.setText("Welcome "+user_name);
+        welome_user.setVisibility(View.VISIBLE);
         login_button.setVisibility(View.GONE);
         userPageButton.setVisibility(View.GONE);
         check_loggedin();
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 user_id = "";
                 user_name = "guest";
+                welome_user.setText("Welcome "+user_name);
                 user_restaurant_name = "";
                 login_button.setVisibility(View.VISIBLE);
                 logout_button.setVisibility(View.GONE);
