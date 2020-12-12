@@ -9,22 +9,24 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autoSizeTextType="uniform"
-        android:text="productName" />
+        android:text="productName"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/productDescrption"
-        android:layout_width="274dp"
+        android:layout_width="238dp"
         android:layout_height="100dp"
         android:layout_weight="1"
-        android:autoSizeTextType="uniform"
+        android:gravity="center"
         android:text="productDescrption" />
 
     <TextView
         android:id="@+id/productPrice"
-        android:layout_width="96dp"
+        android:layout_width="64dp"
         android:layout_height="100dp"
         android:layout_weight="1"
-        android:autoSizeTextType="uniform"
-        android:text="productPrice" />
+        android:gravity="center"
+        android:text="productPrice"
+        android:textStyle="bold" />
 
 </LinearLayout>

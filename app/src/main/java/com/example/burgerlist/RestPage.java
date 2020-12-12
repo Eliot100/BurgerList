@@ -92,22 +92,29 @@ public class RestPage extends AppCompatActivity {
 
 
 
-
-
-
-
-
-
-
-
-
-
     }
 
 
     public void  display(){
-        CommentListAdapter adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);
-        mListView.setAdapter(adapter);
+        //ListView menulistview = (ListView) findViewById(R.id.menu_listview);
+
+
+        //ArrayList<RestMenuProduct> products = new ArrayList<>();
+
+        //RestMenuAdapter adapter1 = new RestMenuAdapter(this, R.layout.adapter_menu_product, products);
+        //menulistview.setAdapter(adapter1);
+
+        ListView commentsistview = (ListView) findViewById(R.id.comment_listview);
+
+        ArrayList<Comment> comments = new ArrayList<>();
+        comments.add(new Comment("dodo","popo","fuck me"));
+        comments.add(new Comment("dodoladodo","popolapopo","fuck me la fuck"));
+
+        CommentListAdapter adapter2 = new CommentListAdapter(this, R.layout.adapter_res_layout, comments);
+        commentsistview.setAdapter(adapter2);
+
+
+
     }
 
     private void get_rest_data(){
@@ -139,8 +146,9 @@ public class RestPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(Current_User_Loggedin){
-                    Comment com =  new Comment(MainActivity.get_user_id(),MainActivity.get_user_name(),comment_text.getText().toString());
-                    ref.child("Comments").child(MainActivity.user_id).setValue(com).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Date d = java.util.Calendar.getInstance().getTime();
+
+                    ref.child("Comments").child(MainActivity.user_id).child(d.toString()).setValue(comment_text.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
 
