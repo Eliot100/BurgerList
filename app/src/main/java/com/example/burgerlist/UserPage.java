@@ -11,7 +11,7 @@ import android.widget.Toast;
 public class UserPage extends AppCompatActivity {
     Button userListButton;
     Button userRestButton;
-    Button CreateRestButton;
+    Button createRestButton;
     Restaurant UserRest;
     private static final int LAUNCHE_CREATE_REST = 1;
 
@@ -21,10 +21,10 @@ public class UserPage extends AppCompatActivity {
         setContentView(R.layout.activity_user_page);
 
         userListButton = (Button)findViewById(R.id.userListButton);
-        userRestButton = (Button)findViewById(R.id.MyRessButton);
-        CreateRestButton = (Button)findViewById(R.id.CreateRestButton);
+        userRestButton = (Button)findViewById(R.id.userRessButton);
+        createRestButton = (Button)findViewById(R.id.createRestButton);
 
-        CreateRestButton.setVisibility(View.GONE);
+        createRestButton.setVisibility(View.GONE);
         userRestButton.setVisibility(View.GONE);
 
         update_ui();
@@ -43,7 +43,7 @@ public class UserPage extends AppCompatActivity {
             }
         });
 
-        CreateRestButton.setOnClickListener(new View.OnClickListener() {
+        createRestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Create_RestPage();
@@ -75,7 +75,7 @@ public class UserPage extends AppCompatActivity {
 
         if (requestCode == 4) {
             if(resultCode == RESULT_OK){
-                CreateRestButton.setVisibility(View.GONE);
+                createRestButton.setVisibility(View.GONE);
                 userRestButton.setVisibility(View.VISIBLE);
             }
             if (resultCode == RESULT_CANCELED) {
@@ -87,14 +87,14 @@ public class UserPage extends AppCompatActivity {
     private void update_ui(){
         if(MainActivity.get_isowner() == true){
             if(MainActivity.get_user_restaurant_name().equals("0") == true) {
-                CreateRestButton.setVisibility(View.VISIBLE);
+                createRestButton.setVisibility(View.VISIBLE);
             }
             else {// owner with a restaurant
                 userRestButton.setVisibility(View.VISIBLE);
             }
         }
         else{
-            CreateRestButton.setVisibility(View.GONE);
+            createRestButton.setVisibility(View.GONE);
         }
 
     }
