@@ -97,6 +97,7 @@ public class RestPage extends AppCompatActivity {
         rest_owner_id2 = this.getIntent().getStringExtra("Owner_id");
         get_comments();
 
+
     }
 
 
@@ -167,14 +168,14 @@ public class RestPage extends AppCompatActivity {
     }
 
     public void get_comments(){
-        rest_comments.clear();
-
 
         DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id2).child("Comments");
 
         comref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                rest_comments.clear();
+                mListView.setAdapter(null);
                 for(DataSnapshot keynode : snapshot.getChildren()){
                     for(DataSnapshot keynode2 : keynode.getChildren()){
                         timeofmessege = keynode2.child("date").getValue().toString();

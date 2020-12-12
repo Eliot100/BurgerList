@@ -76,6 +76,8 @@ public class SearchResults extends AppCompatActivity {
                     owner_id =  keynode.child("ownerId").getValue().toString();
                     phone = keynode.child("phone").getValue().toString();
                     currentRating = keynode.child("currentRating").getValue().toString();
+
+
                     Restaurant ress =  new Restaurant(owner_id,name,phone);
                     Rating ret =  new Rating(ress,Double.parseDouble(currentRating));
                     ratings.add(ret);
