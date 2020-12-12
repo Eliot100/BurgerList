@@ -55,8 +55,8 @@ public class RestPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rest_page);
         //initializing variable
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
+
+
         phone_btn = (ImageButton)findViewById(R.id.phone_button);
         map_btn = (ImageButton)findViewById(R.id.google_map);
         addcomment_btn = (Button)findViewById(R.id.addComent_button);
@@ -71,18 +71,26 @@ public class RestPage extends AppCompatActivity {
 
 
 
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
+
+
+
+
         get_rest_data();
 
 
 
 
-        ListView mListView = (ListView) findViewById(R.id.MyListVisit);
+        ListView mListView = (ListView) findViewById(R.id.comment_listview);
 
 
 
-        ArrayList<Rating> ratings = new ArrayList<>();
+        ArrayList<Comment> comments = new ArrayList<>();
+        comments.add(new Comment("dodo","popo","fuck me"));
+        comments.add(new Comment("dodoladodo","popolapopo","fuck me la fuck"));
 
-        BurgerListAdapter adapter = new BurgerListAdapter(this, R.layout.adapter_view_layout, ratings);
+        CommentListAdapter adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, comments);
         mListView.setAdapter(adapter);
 
 

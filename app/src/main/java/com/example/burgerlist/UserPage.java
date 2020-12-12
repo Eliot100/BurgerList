@@ -53,19 +53,17 @@ public class UserPage extends AppCompatActivity {
 
     private void start_ListPage() {
         Intent intent = new Intent(this, ListPage.class);
-        Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
         startActivity(intent);
     }
 
     private void start_RestPage() {
         Intent intent = new Intent(this, RestPage.class);
-        Toast.makeText(getApplicationContext(),"ke2", Toast.LENGTH_SHORT).show();
+        intent.putExtra("Owner_id",MainActivity.get_user_id());
         startActivityForResult(intent, 2);
     }
 
     private void Create_RestPage() {
         Intent intent = new Intent(this, CreateRestaurant.class);
-        Toast.makeText(getApplicationContext(),"moving to create restaurant page", Toast.LENGTH_SHORT).show();
         startActivityForResult(intent, 4);
     }
 
