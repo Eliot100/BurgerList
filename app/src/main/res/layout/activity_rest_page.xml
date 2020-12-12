@@ -48,7 +48,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ListView
+    <ScrollView
         android:id="@+id/menu_scrollview"
         android:layout_width="386dp"
         android:layout_height="198dp"
@@ -70,7 +70,7 @@
                 tools:layout_editor_absoluteX="33dp"
                 tools:layout_editor_absoluteY="38dp" />
         </RelativeLayout>
-    </ListView>
+    </ScrollView>
 
     <ImageButton
         android:id="@+id/phone_button"
@@ -102,7 +102,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <ListView
+    <ScrollView
         android:id="@+id/comment_scrollview"
         android:layout_width="382dp"
         android:layout_height="247dp"
@@ -117,7 +117,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
-    </ListView>
+    </ScrollView>
 
     <EditText
         android:id="@+id/workinghours_text"
@@ -130,5 +130,13 @@
         android:inputType="textMultiLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/addtolist_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

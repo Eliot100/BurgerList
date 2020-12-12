@@ -36,6 +36,7 @@ public class RestPage extends AppCompatActivity {
     private ImageButton map_btn;
     private Button addcomment_btn;
     private EditText comment_text;
+    private Button addtolist_btn;
     private TextView ratingscore_text;
     private TextView workinghours_text;
     private TextView restname_title;
@@ -65,10 +66,11 @@ public class RestPage extends AppCompatActivity {
         menu_scrollview = (ScrollView)findViewById(R.id.menu_scrollview);
         comment_scrollview = (ScrollView)findViewById(R.id.comment_scrollview);
         restname_title = (TextView)findViewById(R.id.restName_text);
+        addtolist_btn = (Button)findViewById(R.id.addtolist_btn);
 
 
 
-        // getting data from data base.
+
         get_rest_data();
 
 
@@ -76,14 +78,10 @@ public class RestPage extends AppCompatActivity {
 
         ListView mListView = (ListView) findViewById(R.id.MyListVisit);
 
-        //MyRatedRestaurant m = new MyRatedRestaurant();
-        //m.setUserId("Yali_KING");
-        //m.add_rating(new Restaurant("dori","baladi","050-1234567"),7);
-        //m.add_rating(new Restaurant("moshe","habad202020","050-5555567"),9);
+
 
         ArrayList<Rating> ratings = new ArrayList<>();
-        //.add(new Rating(m.get(0)));
-        //.add(new Rating(m.get(1)));
+
         BurgerListAdapter adapter = new BurgerListAdapter(this, R.layout.adapter_view_layout, ratings);
         mListView.setAdapter(adapter);
 
@@ -107,9 +105,7 @@ public class RestPage extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
             }
-
         });
     }
 
@@ -134,6 +130,26 @@ public class RestPage extends AppCompatActivity {
                 }
                 else{
                     Toast.makeText(getApplicationContext(), "You need to be logged in to leave a comment", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+
+
+        });
+        addtolist_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(Current_User_Loggedin){
+                    //String ownerId, String restName, String phoneNum
+                    Restaurant rest =  new Restaurant(rest_owner_id,rest_name,rest_phone);
+                    FirebaseDatabase.getInstance().getReference("Users").child(MainActivity.get_user_id()).child("My list").child(rest_owner_id).setValue(rest)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(getApplicationContext(), "Added to your list", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
                 }
             }
         });
