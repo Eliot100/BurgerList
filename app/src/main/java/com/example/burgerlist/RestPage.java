@@ -3,6 +3,7 @@ package com.example.burgerlist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,6 +33,7 @@ public class RestPage extends AppCompatActivity {
     private boolean Current_User_Is_owner;
     private boolean Current_User_Loggedin;
 
+
     private ImageButton phone_btn;
     private ImageButton map_btn;
     private Button addcomment_btn;
@@ -44,7 +46,10 @@ public class RestPage extends AppCompatActivity {
     private ScrollView comment_scrollview;
     private ListView mListView;
 
+    private String  rest_owner_id2;
+
     private ArrayList<Comment> rest_comments;
+
 
 
 
@@ -56,6 +61,8 @@ public class RestPage extends AppCompatActivity {
 
     private FirebaseDatabase database;
     private DatabaseReference ref;
+
+    private CommentListAdapter adapter;
 
 
     @Override
@@ -83,30 +90,15 @@ public class RestPage extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
 
-
-
-
         get_rest_data();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        rest_owner_id2 = this.getIntent().getStringExtra("Owner_id");
+        get_comments();
 
     }
 
 
     public void  display(){
-        CommentListAdapter adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);
+        adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);
         mListView.setAdapter(adapter);
     }
 
@@ -118,13 +110,10 @@ public class RestPage extends AppCompatActivity {
                 rest_owner_id =  snapshot.child("ownerId").getValue().toString();
                 rest_phone = snapshot.child("phone").getValue().toString();
                 rest_rating = snapshot.child("currentRating").getValue().toString();
-
                 check_user_is_owner();
                 check_user_loggeding();
-                get_comments();
                 update_page();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
             }
@@ -139,8 +128,9 @@ public class RestPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(Current_User_Loggedin){
+                    String time = java.util.Calendar.getInstance().getTime().toString();
                     Comment com =  new Comment(MainActivity.get_user_id(),MainActivity.get_user_name(),comment_text.getText().toString());
-                    ref.child("Comments").child(MainActivity.user_id).setValue(com).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    ref.child("Comments").child(MainActivity.user_id).child(time).setValue(com).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
 
@@ -153,9 +143,6 @@ public class RestPage extends AppCompatActivity {
                     Toast.makeText(getApplicationContext(), "You need to be logged in to leave a comment", Toast.LENGTH_SHORT).show();
                 }
             }
-
-
-
         });
         addtolist_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -174,23 +161,31 @@ public class RestPage extends AppCompatActivity {
                 }
             }
         });
-
     }
 
     public void get_comments(){
-        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id).child("Comments");
+        rest_comments.clear();
+
+
+        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id2).child("Comments");
+
         comref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot keynode : snapshot.getChildren()){
-                    timeofmessege = keynode.child("date").getValue().toString();
-                    messege =  keynode.child("message").getValue().toString();
-                    user_name = keynode.child("name").getValue().toString();
-                    user_id = keynode.child("user").getValue().toString();
-                    Comment com = new Comment(user_id,user_name,messege,timeofmessege);
-                    rest_comments.add(com);
+                    for(DataSnapshot keynode2 : keynode.getChildren()){
+                        timeofmessege = keynode2.child("date").getValue().toString();
+                        messege =  keynode2.child("message").getValue().toString();
+                        user_name = keynode2.child("name").getValue().toString();
+                        user_id = keynode2.child("user").getValue().toString();
+
+                        Comment com = new Comment(user_id,user_name,messege,timeofmessege);
+                        rest_comments.add(com);
+
+                    }
+
                 }
-                display();
+                    display();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
