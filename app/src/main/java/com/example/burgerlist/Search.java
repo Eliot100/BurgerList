@@ -30,6 +30,7 @@ public class Search extends AppCompatActivity {
         searchView = (SearchView)findViewById(R.id.search_view);
         citys = new ArrayList<String>();
         ArrayList<String> filterd_list = new ArrayList<String>();
+        boolean from_creat_ress = this.getIntent().getBooleanExtra("FLAG",false);
 
         //reading csv file of all israel citys
          // will be done later
@@ -75,31 +76,28 @@ public class Search extends AppCompatActivity {
                     filterd_list.add(adapter.getItem(i).toString());
                     //Toast.makeText(getApplicationContext(),filterd_list.get(i), Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(getApplicationContext(),filterd_list.get(position), Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent();
-                intent.putExtra("Search_Res", filterd_list.get(position));
-                setResult(Activity.RESULT_OK,intent);
-                finish();
+                if (from_creat_ress) {
+                    Toast.makeText(getApplicationContext(),filterd_list.get(position), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent();
+                    intent.putExtra("Search_Res", filterd_list.get(position));
+                    setResult(Activity.RESULT_OK,intent);
+                    finish();
+                }
+                else{
+                    go_to_search_result(filterd_list.get(position));
+                }
+   ;
 
             }
         });
 
+    }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    public void go_to_search_result(String city){
+        Intent intent = new Intent(this, SearchResults.class);
+        intent.putExtra("Search_Res", city);
+        startActivityForResult(intent,6);
     }
 }
+

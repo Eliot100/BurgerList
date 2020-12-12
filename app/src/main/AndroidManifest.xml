@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BurgerList">
-        <activity android:name=".VisitListActivity"></activity>
+        <activity android:name=".SearchResults"></activity>
+        <activity android:name=".VisitListActivity" />
         <activity android:name=".Search" />
         <activity android:name=".GetMyRestaurantLocation" />
         <!--

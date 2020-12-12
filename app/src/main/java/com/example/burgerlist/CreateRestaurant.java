@@ -110,6 +110,7 @@ public class CreateRestaurant extends AppCompatActivity {
 
     private void start_search(){
         Intent intent = new Intent(this, Search.class);
+        intent.putExtra("FLAG",true);
         startActivityForResult(intent,1);
     }
 
