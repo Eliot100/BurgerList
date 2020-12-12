@@ -108,6 +108,7 @@ public class RestPage extends AppCompatActivity {
 
                 check_user_is_owner();
                 check_user_loggeding();
+                //get_comments();
                 update_page();
             }
 
@@ -125,9 +126,8 @@ public class RestPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(Current_User_Loggedin){
-                    Date d = java.util.Calendar.getInstance().getTime();
-
-                    ref.child("Comments").child(MainActivity.user_id).child(d.toString()).setValue(comment_text.getText().toString()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    Comment com =  new Comment(MainActivity.get_user_id(),MainActivity.get_user_name(),comment_text.getText().toString());
+                    ref.child("Comments").child(MainActivity.user_id).setValue(com).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
 
@@ -163,6 +163,36 @@ public class RestPage extends AppCompatActivity {
         });
 
     }
+
+//    public void get_comments(){
+//        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants").child("Comments");
+//        comref.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                for(DataSnapshot keynode : snapshot.getChildren()){
+//                    timeofmessege = keynode.child("date").getValue().toString();
+//                    messege =  keynode.child("message").getValue().toString();
+//                    user_name = keynode.child("user").getValue().toString();
+//
+//                    Restaurant ress =  new Restaurant(owner_id,name,phone);
+//                    Rating ret =  new Rating(ress,Double.parseDouble(currentRating));
+//                    ratings.add(ret);
+//                }
+//                display();
+//            }
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//            }
+//        });
+//    }
+
+
+
+
+
+
+
+
     private void check_user_is_owner(){
         if(rest_owner_id.equals(MainActivity.get_user_id()) == true){
             Current_User_Is_owner = true;
