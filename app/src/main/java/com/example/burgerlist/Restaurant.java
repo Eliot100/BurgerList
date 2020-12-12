@@ -18,6 +18,7 @@ public class Restaurant implements Serializable {
         PhoneNum = phoneNum;
         RestLocation = restLocation;
         restRat = new RestaurantRating();
+        restRat.addRet(ownerId,5);
     }
 
     public Restaurant(String ownerId, String restName, String phoneNum){
@@ -26,6 +27,7 @@ public class Restaurant implements Serializable {
         PhoneNum = phoneNum;
         RestLocation = new LatLng(-1, -1);
         restRat = new RestaurantRating();
+        restRat.addRet(ownerId,5);
     }
 
     public double getCurrentRating() {

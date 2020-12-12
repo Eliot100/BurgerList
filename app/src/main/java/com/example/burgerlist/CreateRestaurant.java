@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -37,10 +38,12 @@ public class CreateRestaurant extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     private static final int requestRestLoc = 100;
     private Button locationButton, createRestButton;
-    private EditText phoneNum, RestName, RestLat, RestLng, Restcity, RestAddras;
+    private EditText phoneNum, RestName, RestLat, RestLng, RestAddras;
+    private TextView Restcity;
     private Switch LocSwitch;
     private LatLng RestLocation;
     private FirebaseAuth mAuth;
+    private String city;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,7 @@ public class CreateRestaurant extends AppCompatActivity {
 
         phoneNum = (EditText)findViewById(R.id.phoneNum);
         RestName = (EditText)findViewById(R.id.RestName);
-        Restcity = (EditText)findViewById(R.id.City_text);
+        Restcity = (TextView)findViewById(R.id.city_text);
         RestAddras =(EditText)findViewById(R.id.street_text);
         RestLat = (EditText)findViewById(R.id.RestLat);
         RestLng = (EditText)findViewById(R.id.RestLng);
@@ -83,12 +86,12 @@ public class CreateRestaurant extends AppCompatActivity {
         });
 
 
-        Restcity.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
+
+
+        Restcity.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 start_search();
-                return false;
             }
         });
 
@@ -116,6 +119,8 @@ public class CreateRestaurant extends AppCompatActivity {
         if (requestCode == 1) {
             if(resultCode == RESULT_OK){
                 Restcity.setText(data.getStringExtra("Search_Res"));
+                city = data.getStringExtra("Search_Res");
+
             }
             if (resultCode == RESULT_CANCELED) {
                 //might be usefull later
@@ -138,7 +143,7 @@ public class CreateRestaurant extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Restaurant name must be between 2 to 50 characters", Toast.LENGTH_SHORT).show();
             return false;
         }
-        else if(Restcity.getText().toString().length()<2 || Restcity.getText().toString().length()>50){
+        else if(city.length()<2 || city.length()>50){
             Toast.makeText(getApplicationContext(), "city name must be between 2 to 50 characters", Toast.LENGTH_SHORT).show();
             return false;
         }
@@ -146,34 +151,40 @@ public class CreateRestaurant extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Incorrect phone number", Toast.LENGTH_SHORT).show();
             return false;
         }
-
+        Toast.makeText(getApplicationContext(), "we here? 1", Toast.LENGTH_LONG).show();
         String owner_id = MainActivity.get_user_id();
         LatLng latlng = new LatLng(150,150);// default currently does nothing.
         Restaurant ress = new Restaurant(owner_id,RestName.getText().toString(),phoneNum.getText().toString(),latlng);
-        FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(getApplicationContext(), "successfully added restaurant to app", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "we here? 2", Toast.LENGTH_LONG).show();
+
+            FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Toast.makeText(getApplicationContext(), "successfully added restaurant to app", Toast.LENGTH_LONG).show();
+
+                }
+            }); // added Restaurant to restaurants branch
+            FirebaseDatabase.getInstance().getReference("City").child(city).child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    Toast.makeText(getApplicationContext(), "successfully added restaurant to app2", Toast.LENGTH_LONG).show();
+                }
+
+            });//added Restaurant to cites branch
+            FirebaseDatabase.getInstance().getReference("Users").child(MainActivity.user_id).child("restaurant_name").setValue(RestName.getText().toString())
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(getApplicationContext(), "successfully added restaurant to app3", Toast.LENGTH_LONG).show();
+                        }
+                    });
+            MainActivity.set_user_restaurant_name(RestName.getText().toString());
+            return true;
 
 
-            }
-        }); // added Restaurant to restaurants branch
-        FirebaseDatabase.getInstance().getReference("City").child(Restcity.getText().toString()).child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
 
-            }
 
-        });//added Restaurant to cites branch
-        FirebaseDatabase.getInstance().getReference("Users").child(MainActivity.user_id).child("restaurant_name").setValue(RestName.getText().toString())
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
 
-            }
-        });
-        MainActivity.set_user_restaurant_name(RestName.getText().toString());
-        return true;
     }
 
     private void returnToUserPage() {

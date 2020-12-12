@@ -1,11 +1,13 @@
 package com.example.burgerlist;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RestaurantRating {
-    private List<Ret> ratings;
+    private ArrayList<Ret> ratings;
 
     public RestaurantRating() {
+        ratings =  new ArrayList<Ret>();
     }
 
     public int getSize() {
