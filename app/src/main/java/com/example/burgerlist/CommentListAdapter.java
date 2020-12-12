@@ -32,7 +32,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
     private static class ViewHolder {
         TextView username;
         TextView message;
-        TextView
+        //TextView
     }
 
     /**
@@ -51,11 +51,11 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //get the persons information
-        String name = getItem(position).getRess().getName();
-        double rate = getItem(position).getRetValue();
+        //String name = getItem(position).getRess().getName();
+        //double rate = getItem(position).getRetValue();
 
         //Create the person object with the information
-        RatingPreview r = new RatingPreview(name ,rate);
+        //RatingPreview r = new RatingPreview(name ,rate);
 
         //create the view result for showing the animation
         final View result;
@@ -68,8 +68,8 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent, false);
             holder= new ViewHolder();
-            holder.name = (TextView) convertView.findViewById(R.id.BurgerName);
-            holder.rate = (TextView) convertView.findViewById(R.id.Score);
+            //holder.name = (TextView) convertView.findViewById(R.id.BurgerName);
+            //holder.rate = (TextView) convertView.findViewById(R.id.Score);
             result = convertView;
 
             convertView.setTag(holder);
@@ -79,8 +79,8 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             result = convertView;
         }
 
-        holder.name.setText(r.getResName());
-        holder.rate.setText(String.valueOf(rate));
+        //holder.name.setText(r.getResName());
+        //holder.rate.setText(String.valueOf(rate));
         return convertView;
     }
 }
