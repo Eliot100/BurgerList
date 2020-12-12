@@ -53,7 +53,7 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
         String getOwnerId = getItem(position).getOwnerId();
         String name = getItem(position).getName();
         String PhoneNum = getItem(position).getPhone();
-//        double birthday = getItem(position).getAvg_rate();
+        double rate = 9;
 
         //Create the person object with the information
         Restaurant r = new Restaurant(getOwnerId,name,PhoneNum);
@@ -81,7 +81,7 @@ public class BurgerListAdapter extends ArrayAdapter<Restaurant> {
         }
 
         holder.name.setText(r.getName());
-//        holder.rate.setText(String.valueOf(r.getAvg_rate()));
+        holder.rate.setText(String.valueOf(rate));
         return convertView;
     }
 }
