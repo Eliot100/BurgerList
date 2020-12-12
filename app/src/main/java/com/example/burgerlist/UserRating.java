@@ -3,10 +3,10 @@ package com.example.burgerlist;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RestaurantRating {
+public class UserRating {
     private ArrayList<Ret> ratings;
 
-    public RestaurantRating() {
+    public UserRating() {
         ratings = new ArrayList<>();
     }
 
