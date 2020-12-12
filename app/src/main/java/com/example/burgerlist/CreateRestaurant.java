@@ -151,11 +151,11 @@ public class CreateRestaurant extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Incorrect phone number", Toast.LENGTH_SHORT).show();
             return false;
         }
-        Toast.makeText(getApplicationContext(), "we here? 1", Toast.LENGTH_LONG).show();
+
         String owner_id = MainActivity.get_user_id();
         LatLng latlng = new LatLng(150,150);// default currently does nothing.
         Restaurant ress = new Restaurant(owner_id,RestName.getText().toString(),phoneNum.getText().toString(),latlng);
-        Toast.makeText(getApplicationContext(), "we here? 2", Toast.LENGTH_LONG).show();
+
 
             FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
