@@ -167,7 +167,7 @@ public class CreateRestaurant extends AppCompatActivity {
             FirebaseDatabase.getInstance().getReference("City").child(city).child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    Toast.makeText(getApplicationContext(), "successfully added restaurant to app2", Toast.LENGTH_LONG).show();
+
                 }
 
             });//added Restaurant to cites branch
@@ -175,7 +175,7 @@ public class CreateRestaurant extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(getApplicationContext(), "successfully added restaurant to app3", Toast.LENGTH_LONG).show();
+
                         }
                     });
             MainActivity.set_user_restaurant_name(RestName.getText().toString());
