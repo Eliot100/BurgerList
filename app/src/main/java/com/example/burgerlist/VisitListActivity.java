@@ -22,5 +22,7 @@ public class VisitListActivity extends AppCompatActivity {
         BurgerListAdapter adapter = new BurgerListAdapter(this, R.layout.adapter_view_layout, restaurants);
         mListView.setAdapter(adapter);
 
+
+
     }
 }

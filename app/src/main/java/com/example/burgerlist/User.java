@@ -9,6 +9,7 @@ public class User {
     private String Password;
     private boolean Owner;
     private String restaurant_name;
+    private MyRatedRestaurant my_rated_res;
 
     public User() {
     }
@@ -19,6 +20,7 @@ public class User {
         Username = username;
         Owner = owner;
         restaurant_name = "0";
+        MyRatedRestaurant my_rated_res =  new MyRatedRestaurant();
     }
 
     public User(User user) {
