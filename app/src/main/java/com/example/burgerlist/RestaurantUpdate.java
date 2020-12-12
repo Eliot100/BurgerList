@@ -17,4 +17,6 @@ public class RestaurantUpdate {
         return FirebaseDatabase.getInstance().getReference("Restaurants")
                 .child(OwnerId).child("location").setValue(newLatLng).isSuccessful();
     }
+
+
 }
