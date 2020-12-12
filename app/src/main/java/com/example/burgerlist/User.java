@@ -9,7 +9,7 @@ public class User {
     private String Password;
     private boolean Owner;
     private String restaurant_name;
-    private MyRatedRestaurant my_rated_res;
+    private UserRating my_rated_res;
 
     public User() {
     }
@@ -20,7 +20,9 @@ public class User {
         Username = username;
         Owner = owner;
         restaurant_name = "0";
-        MyRatedRestaurant my_rated_res =  new MyRatedRestaurant();
+        UserRating my_rated_res =  new UserRating();
+        this.my_rated_res = my_rated_res;
+        my_rated_res.addRet("test",5);
     }
 
     public User(User user) {
@@ -29,6 +31,7 @@ public class User {
         Username = user.getUsername();
         Owner = user.isOwner();
         restaurant_name = user.restaurant_name;
+        my_rated_res = user.my_rated_res;
     }
 
     public String getRestaurant_name() {
@@ -37,6 +40,10 @@ public class User {
 
     public void setRestaurant_name(String restaurant_name) {
         this.restaurant_name = restaurant_name;
+    }
+
+    public void add_rating(String ress_uid , double rating){
+        this.my_rated_res.addRet(ress_uid,rating);
     }
 
     public String getEmail() {
