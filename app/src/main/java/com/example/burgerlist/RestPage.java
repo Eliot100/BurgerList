@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,7 +46,7 @@ public class RestPage extends AppCompatActivity {
     private ScrollView menu_scrollview;
     private ScrollView comment_scrollview;
     private ListView mListView;
-
+    private RatingBar ratingBar;
     private String  rest_owner_id2;
 
     private ArrayList<Comment> rest_comments;
@@ -73,7 +74,6 @@ public class RestPage extends AppCompatActivity {
         setContentView(R.layout.activity_rest_page);
         //initializing variable
 
-
         phone_btn = (ImageButton)findViewById(R.id.phone_button);
         map_btn = (ImageButton)findViewById(R.id.google_map);
         addcomment_btn = (Button)findViewById(R.id.addComent_button);
@@ -84,19 +84,16 @@ public class RestPage extends AppCompatActivity {
         comment_scrollview = (ScrollView)findViewById(R.id.comment_scrollview);
         restname_title = (TextView)findViewById(R.id.restName_text);
         addtolist_btn = (Button)findViewById(R.id.addtolist_btn);
-
+        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
         mListView = (ListView) findViewById(R.id.comment_listview);
         rest_comments = new ArrayList<Comment>();
 
-
-
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
-
+        ratingBar.setMax(10);
         get_rest_data();
         rest_owner_id2 = this.getIntent().getStringExtra("Owner_id");
         get_comments();
-
     }
 
 
@@ -126,6 +123,7 @@ public class RestPage extends AppCompatActivity {
     private void update_page(){
         restname_title.setText(rest_name);
         ratingscore_text.setText(rest_rating);
+        ratingBar.setNumStars(Integer.parseInt(rest_rating));
 
         addcomment_btn.setOnClickListener(new View.OnClickListener() {
             @Override

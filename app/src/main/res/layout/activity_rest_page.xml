@@ -11,13 +11,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginBottom="22dp"
         android:text="add"
         app:layout_constraintBottom_toTopOf="@+id/comment_scrollview"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.925"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu_scrollview"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/addcomment_text"
@@ -30,7 +31,7 @@
         android:hint="add a coment"
         android:inputType="textPersonName"
         app:layout_constraintEnd_toStartOf="@+id/addComent_button"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="0.13"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu_scrollview" />
 
@@ -50,13 +51,13 @@
 
     <ScrollView
         android:id="@+id/menu_scrollview"
-        android:layout_width="386dp"
-        android:layout_height="198dp"
-        android:layout_marginTop="15dp"
+        android:layout_width="406dp"
+        android:layout_height="197dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.52"
+        app:layout_constraintHorizontal_bias="0.357"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/googlemap_button">
+        app:layout_constraintTop_toBottomOf="@+id/workinghours_text">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -64,9 +65,9 @@
 
 
             <ListView
-                android:id="@+id/menu_listview"
+                android:id="@+id/MyListVisit"
                 android:layout_width="match_parent"
-                android:layout_height="198dp"
+                android:layout_height="match_parent"
                 tools:layout_editor_absoluteX="33dp"
                 tools:layout_editor_absoluteY="38dp" />
         </RelativeLayout>
@@ -83,11 +84,15 @@
         app:layout_constraintTop_toBottomOf="@+id/restName_text"
         app:srcCompat="@android:drawable/sym_action_call" />
 
+
     <ImageButton
         android:id="@+id/googlemap_button"
         android:layout_width="101dp"
         android:layout_height="50dp"
+        android:layout_marginStart="3dp"
         android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.075"
         app:layout_constraintStart_toEndOf="@+id/phone_button"
         app:layout_constraintTop_toBottomOf="@+id/restName_text"
         app:srcCompat="@android:drawable/ic_dialog_map" />
@@ -97,21 +102,23 @@
         android:layout_width="70dp"
         android:layout_height="41dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="28dp"
         android:text="TextView"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
     <ScrollView
         android:id="@+id/comment_scrollview"
-        android:layout_width="382dp"
-        android:layout_height="247dp"
+        android:layout_width="417dp"
+        android:layout_height="244dp"
         android:layout_marginTop="22dp"
         android:layout_marginBottom="23dp"
         app:layout_constraintBottom_toTopOf="@+id/currentReating_text"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.451"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/addcomment_text">
+        app:layout_constraintTop_toBottomOf="@+id/addcomment_text"
+        app:layout_constraintVertical_bias="0.0">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -121,43 +128,48 @@
             <ListView
                 android:id="@+id/comment_listview"
                 android:layout_width="match_parent"
-                android:layout_height="247dp"
+                android:layout_height="match_parent"
                 tools:layout_editor_absoluteX="33dp"
                 tools:layout_editor_absoluteY="38dp" />
         </RelativeLayout>
     </ScrollView>
 
-
     <EditText
         android:id="@+id/workinghours_text"
-        android:layout_width="163dp"
-        android:layout_height="85dp"
+        android:layout_width="141dp"
+        android:layout_height="123dp"
         android:layout_marginTop="16dp"
-        android:layout_marginEnd="12dp"
+        android:autoSizeTextType="uniform"
         android:ems="10"
         android:gravity="start|top"
         android:inputType="textMultiLine"
+        android:text="Sunday:\nMonday:\nTuesday:\nWednesday:\nThursday:\nFriday:\nSaturday:"
+        app:autoSizeTextType="none"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.944"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:textSize="12sp" />
 
     <Button
         android:id="@+id/addtolist_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="87dp"
+        android:layout_height="66dp"
         android:layout_marginStart="12dp"
-        android:layout_marginBottom="12dp"
         android:text="Add to my list"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/comment_scrollview"
+        app:layout_constraintVertical_bias="0.483" />
 
-    <Spinner
-        android:id="@+id/rate_dropdownlist"
-        android:layout_width="39dp"
-        android:layout_height="41dp"
+    <RatingBar
+        android:id="@+id/ratingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toStartOf="@+id/currentReating_text"
-        app:layout_constraintHorizontal_bias="0.223"
-        app:layout_constraintStart_toEndOf="@+id/addtolist_btn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/comment_scrollview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
