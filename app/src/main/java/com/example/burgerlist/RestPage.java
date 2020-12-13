@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class RestPage extends AppCompatActivity {
     private String rest_owner_id, rest_name, rest_phone, rest_rating = "5", rest_owner_id2;
@@ -103,16 +104,22 @@ public class RestPage extends AppCompatActivity {
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
                 if(disableClick)
                     disableClick = false;
-                else if (!MainActivity.get_user_id().equals("")){
+                else
+                    if (!MainActivity.get_user_id().equals("")){
                     Toast.makeText(getApplicationContext(), "update rating", Toast.LENGTH_SHORT).show();
                     FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id)
                             .child("Rating").child(MainActivity.get_user_id()).setValue(ratingBar.getRating()*2);
                     disableClick = true;
-//                    new Thread() {
-//                        public void run() {
+                    new Thread() {
+                        public void run() {
+                            try {
+                                Thread.sleep(50);
+                            } catch (Exception e){
+                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                             ratingBar.setRating(Float.parseFloat(rest_rating)/2);
-//                        }
-//                    }.start();
+                        }
+                    }.start();
 
                 }
 
@@ -146,11 +153,6 @@ public class RestPage extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-    }
-
-    private void update_page(){
-        restName_title.setText(rest_name);
-        ratingScore_text.setText("current rating: "+rest_rating);
         addComment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -188,6 +190,12 @@ public class RestPage extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void update_page(){
+        restName_title.setText(rest_name);
+        ratingScore_text.setText("current rating: "+rest_rating);
+
     }
 
     public void get_comments(){
