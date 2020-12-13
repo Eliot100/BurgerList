@@ -1,16 +1,20 @@
 package com.example.burgerlist;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.firebase.auth.FirebaseAuth;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -18,7 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     Button login_button, logout_button;
     Button userPageButton;
     Button search_button;
@@ -28,11 +32,16 @@ public class MainActivity extends AppCompatActivity {
     static String user_restaurant_name;
     static boolean isowner ;
     static boolean isloggedin = false;
+    GoogleMap googleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         login_button = (Button)findViewById(R.id.login_button);
         logout_button = (Button)findViewById(R.id.logout_button);
@@ -161,7 +170,6 @@ public class MainActivity extends AppCompatActivity {
     public static boolean get_isowner(){
         return isowner;
     }
-
     public static boolean get_isloggedin() {
         return isloggedin;
     }
@@ -170,6 +178,16 @@ public class MainActivity extends AppCompatActivity {
     }
     public static void set_user_restaurant_name(String ress_name){
         user_restaurant_name = ress_name;
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        this.googleMap = googleMap;
+        LatLng TelAviv = new LatLng(32.0853, 34.7818);
+        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(TelAviv));
+        LatLng RamatGan = new LatLng(32.080799, 34.794508);
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(13).build();
+        this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
 }
