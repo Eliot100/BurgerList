@@ -3,17 +3,16 @@ package com.example.burgerlist;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -22,51 +21,28 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 
 public class RestPage extends AppCompatActivity {
-    private String rest_owner_id;
-    private String rest_name;
-    private String rest_phone;
-    private String rest_rating;
-    private boolean Current_User_Is_owner;
-    private boolean Current_User_Loggedin;
-
-
-    private ImageButton phone_btn;
-    private ImageButton map_btn;
-    private Button addcomment_btn;
+    private String rest_owner_id, rest_name, rest_phone, rest_rating = "5", rest_owner_id2;
+    private String timeOfMessage, message, user_name, user_id = "";
+    private boolean Current_User_Is_owner, Current_User_Loggedin;
+    private boolean disableClick = true;
+    private Button addComment_btn, addToList_btn;
     private EditText comment_text;
-    private Button addtolist_btn;
-    private TextView ratingscore_text;
-    private TextView workinghours_text;
-    private TextView restname_title;
-    private ScrollView menu_scrollview;
-    private ScrollView comment_scrollview;
+    private ImageButton phone_btn, map_btn;
+    private TextView ratingScore_text, workingHours_text, restName_title;
+    private ScrollView menu_scrollview, comment_scrollview;
     private ListView mListView;
     private RatingBar ratingBar;
-    private String  rest_owner_id2;
-
     private ArrayList<Comment> rest_comments;
-
-
-
-
-
-    private String timeofmessege;
-    private String messege;
-    private String user_name;
-    private String user_id;
-
+    private CommentListAdapter adapter, adapter2;
+    private PopupWindow popUp;
 
     private FirebaseDatabase database;
     private DatabaseReference ref;
-
-    private CommentListAdapter adapter;
-    private CommentListAdapter adapter2;
-
+    private double currentRating;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,27 +50,78 @@ public class RestPage extends AppCompatActivity {
         setContentView(R.layout.activity_rest_page);
         //initializing variable
 
-
         phone_btn = (ImageButton)findViewById(R.id.phone_button);
         map_btn = (ImageButton)findViewById(R.id.google_map);
-        addcomment_btn = (Button)findViewById(R.id.addComent_button);
+        addComment_btn = (Button)findViewById(R.id.addComent_button);
         comment_text = (EditText)findViewById(R.id.addcomment_text);
-        ratingscore_text = (TextView)findViewById(R.id.currentReating_text);
-        workinghours_text = (TextView)findViewById(R.id.workinghours_text);
+        ratingScore_text = (TextView)findViewById(R.id.currentReating_text);
+        workingHours_text = (TextView)findViewById(R.id.workinghours_text);
         menu_scrollview = (ScrollView)findViewById(R.id.menu_scrollview);
         comment_scrollview = (ScrollView)findViewById(R.id.comment_scrollview);
-        restname_title = (TextView)findViewById(R.id.restName_text);
-        addtolist_btn = (Button)findViewById(R.id.addtolist_btn);
-       // ratingBar = (RatingBar) findViewById(R.id.ratingBar);
+        restName_title = (TextView)findViewById(R.id.restName_text);
+        addToList_btn = (Button)findViewById(R.id.addtolist_btn);
+        ratingBar = (RatingBar) findViewById(R.id.ratingBar);
         mListView = (ListView) findViewById(R.id.comment_listview);
         rest_comments = new ArrayList<Comment>();
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
-        //ratingBar.setMax(10);
+
+        ratingBar.setNumStars(5);
         get_rest_data();
         rest_owner_id2 = this.getIntent().getStringExtra("Owner_id");
         get_comments();
+        rating();
+        ref.child("Rating").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                currentRating = 0; int size = 0;
+                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
+                    currentRating += Integer.parseInt(postSnapshot.getValue(Long.class).toString());
+                    size++;
+                }
+                rest_rating = String.valueOf(currentRating/size);
+                try{
+                    ref.child("currentRating").setValue(Double.valueOf(rest_rating));
+                }catch (Exception e){
+                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+//                ratingBar.setRating(Float.parseFloat(rest_rating)/2);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private void rating() {
+        ratingBar.setRating(Float.parseFloat(rest_rating)/2);
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if(disableClick)
+                    disableClick = false;
+                else if (!MainActivity.get_user_id().equals("")){
+                    Toast.makeText(getApplicationContext(), "update rating", Toast.LENGTH_SHORT).show();
+                    FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id)
+                            .child("Rating").child(MainActivity.get_user_id()).setValue(ratingBar.getRating()*2);
+                    disableClick = true;
+//                    new Thread() {
+//                        public void run() {
+                            ratingBar.setRating(Float.parseFloat(rest_rating)/2);
+//                        }
+//                    }.start();
+
+                }
+
+            }
+        });
+    }
+
+    private void addRating(String user_id, int numStars) {
+
     }
 
 
@@ -122,11 +149,9 @@ public class RestPage extends AppCompatActivity {
     }
 
     private void update_page(){
-        restname_title.setText(rest_name);
-        ratingscore_text.setText(rest_rating);
-        //ratingBar.setNumStars(Integer.parseInt(rest_rating));
-
-        addcomment_btn.setOnClickListener(new View.OnClickListener() {
+        restName_title.setText(rest_name);
+        ratingScore_text.setText("current rating: "+rest_rating);
+        addComment_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(Current_User_Loggedin){
@@ -146,7 +171,7 @@ public class RestPage extends AppCompatActivity {
                 }
             }
         });
-        addtolist_btn.setOnClickListener(new View.OnClickListener() {
+        addToList_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(Current_User_Loggedin){
@@ -173,13 +198,14 @@ public class RestPage extends AppCompatActivity {
                 rest_comments.clear();
                 for(DataSnapshot keynode : snapshot.getChildren()){
                     for(DataSnapshot keynode2 : keynode.getChildren()){
-                        timeofmessege = keynode2.child("date").getValue().toString();
-                        messege =  keynode2.child("message").getValue().toString();
+                        timeOfMessage = keynode2.child("date").getValue().toString();
+                        message =  keynode2.child("message").getValue().toString();
                         user_name = keynode2.child("name").getValue().toString();
                         user_id = keynode2.child("user").getValue().toString();
 
-                        Comment com = new Comment(user_id,user_name,messege,timeofmessege);
+                        Comment com = new Comment(user_id,user_name, message, timeOfMessage);
                         rest_comments.add(com);
+                        comment_text.setText("");
                     }
                 }
                 display();

@@ -181,11 +181,6 @@ public class CreateRestaurant extends AppCompatActivity {
                     });
             MainActivity.set_user_restaurant_name(RestName.getText().toString());
             return true;
-
-
-
-
-
     }
 
     private void returnToUserPage() {

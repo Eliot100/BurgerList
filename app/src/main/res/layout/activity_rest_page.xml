@@ -15,15 +15,15 @@
         android:text="add"
         app:layout_constraintBottom_toTopOf="@+id/comment_scrollview"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.925"
+        app:layout_constraintHorizontal_bias="0.981"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/menu_scrollview"
         app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/addcomment_text"
-        android:layout_width="278dp"
-        android:layout_height="48dp"
+        android:layout_width="252dp"
+        android:layout_height="50dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
         android:layout_marginEnd="17dp"
@@ -51,8 +51,8 @@
 
     <ScrollView
         android:id="@+id/menu_scrollview"
-        android:layout_width="406dp"
-        android:layout_height="197dp"
+        android:layout_width="335dp"
+        android:layout_height="152dp"
         android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.357"
@@ -67,7 +67,7 @@
             <ListView
                 android:id="@+id/MyListVisit"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="152dp"
                 tools:layout_editor_absoluteX="33dp"
                 tools:layout_editor_absoluteY="38dp" />
         </RelativeLayout>
@@ -75,8 +75,8 @@
 
     <ImageButton
         android:id="@+id/phone_button"
-        android:layout_width="78dp"
-        android:layout_height="50dp"
+        android:layout_width="53dp"
+        android:layout_height="52dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.039"
@@ -87,33 +87,31 @@
 
     <ImageButton
         android:id="@+id/googlemap_button"
-        android:layout_width="101dp"
-        android:layout_height="50dp"
+        android:layout_width="51dp"
+        android:layout_height="54dp"
         android:layout_marginStart="3dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.075"
+        app:layout_constraintHorizontal_bias="0.053"
         app:layout_constraintStart_toEndOf="@+id/phone_button"
         app:layout_constraintTop_toBottomOf="@+id/restName_text"
         app:srcCompat="@android:drawable/ic_dialog_map" />
 
     <TextView
         android:id="@+id/currentReating_text"
-        android:layout_width="70dp"
-        android:layout_height="41dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="28dp"
+        android:layout_width="55dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="164dp"
         android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/restName_text" />
 
     <ScrollView
         android:id="@+id/comment_scrollview"
-        android:layout_width="417dp"
-        android:layout_height="244dp"
+        android:layout_width="310dp"
+        android:layout_height="164dp"
         android:layout_marginTop="22dp"
-        android:layout_marginBottom="23dp"
-        app:layout_constraintBottom_toTopOf="@+id/currentReating_text"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.451"
         app:layout_constraintStart_toStartOf="parent"
@@ -128,7 +126,7 @@
             <ListView
                 android:id="@+id/comment_listview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="164dp"
                 tools:layout_editor_absoluteX="33dp"
                 tools:layout_editor_absoluteY="38dp" />
         </RelativeLayout>
@@ -153,23 +151,27 @@
 
     <Button
         android:id="@+id/addtolist_btn"
-        android:layout_width="87dp"
-        android:layout_height="66dp"
-        android:layout_marginStart="12dp"
+        android:layout_width="97dp"
+        android:layout_height="59dp"
+        android:layout_marginStart="8dp"
         android:text="Add to my list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/comment_scrollview"
-        app:layout_constraintVertical_bias="0.483" />
+        app:layout_constraintVertical_bias="0.4" />
 
     <RatingBar
         android:id="@+id/ratingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="236dp"
+        android:layout_height="64dp"
         android:layout_marginTop="12dp"
+        android:rating="5.0"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.903"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/comment_scrollview" />
+        app:layout_constraintTop_toBottomOf="@+id/comment_scrollview"
+        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

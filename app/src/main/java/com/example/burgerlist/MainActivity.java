@@ -21,7 +21,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     Button login_button, logout_button;
     Button userPageButton;
@@ -72,6 +71,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 user_restaurant_name = "";
                 login_button.setVisibility(View.VISIBLE);
                 logout_button.setVisibility(View.GONE);
+                userPageButton.setVisibility(View.GONE);
             }
         });
 
