@@ -18,6 +18,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BurgerList">
+        android:name="com.xyz.MyApplication">
 
 
         <activity android:name=".getLocationActivity"></activity>
