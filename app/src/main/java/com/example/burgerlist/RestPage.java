@@ -2,11 +2,20 @@ package com.example.burgerlist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
@@ -40,6 +49,7 @@ public class RestPage extends AppCompatActivity {
     private ArrayList<Comment> rest_comments;
     private CommentListAdapter adapter, adapter2;
     private PopupWindow popUp;
+    private static final int REQUEST_CALL = 1;
 
     private FirebaseDatabase database;
     private DatabaseReference ref;
@@ -95,6 +105,37 @@ public class RestPage extends AppCompatActivity {
 
             }
         });
+        takeACall();
+    }
+
+    private void takeACall() {
+        phone_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try{
+                    if(ContextCompat.checkSelfPermission(RestPage.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(RestPage.this,
+                                new String[] {Manifest.permission.CALL_PHONE}, REQUEST_CALL);
+                    } else {
+                        String dial = "tel:" + rest_phone;
+                        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+                    }
+                }catch (Exception e){
+                    Toast.makeText(RestPage.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == REQUEST_CALL){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                takeACall();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void rating() {

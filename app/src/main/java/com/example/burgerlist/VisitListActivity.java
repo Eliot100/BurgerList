@@ -72,7 +72,7 @@ public class VisitListActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 for(DataSnapshot keynode : snapshot.getChildren()){
-                    Toast.makeText(getApplicationContext(), "You need to be logged in to leave a comment", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "You need to be logged in to leave a comment", Toast.LENGTH_SHORT).show();
                     name = keynode.child("name").getValue().toString();
                     owner_id =  keynode.child("ownerId").getValue().toString();
                     phone = keynode.child("phone").getValue().toString();
