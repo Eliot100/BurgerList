@@ -1,20 +1,29 @@
 package com.example.burgerlist;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+    private final int LOCATION_REQUEST_CODE = 10;
     Button login_button, logout_button;
     Button userPageButton;
     Button search_button;
@@ -29,9 +39,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     static String user_id = "";
     static String user_name = "guest";
     static String user_restaurant_name;
-    static boolean isowner ;
+    static boolean isowner;
     static boolean isloggedin = false;
     GoogleMap googleMap;
+    FusedLocationProviderClient fusedLocationProviderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +52,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
-        login_button = (Button)findViewById(R.id.login_button);
-        logout_button = (Button)findViewById(R.id.logout_button);
-        userPageButton = (Button)findViewById(R.id.userPageButton);
-        search_button =(Button)findViewById(R.id.search_button);
-        welome_user = (TextView)findViewById(R.id.user_welcom_text);
+        login_button = (Button) findViewById(R.id.login_button);
+        logout_button = (Button) findViewById(R.id.logout_button);
+        userPageButton = (Button) findViewById(R.id.userPageButton);
+        search_button = (Button) findViewById(R.id.search_button);
+        welome_user = (TextView) findViewById(R.id.user_welcom_text);
 
 
-        welome_user.setText("Welcome "+user_name);
+        welome_user.setText("Welcome " + user_name);
         welome_user.setVisibility(View.VISIBLE);
         login_button.setVisibility(View.GONE);
         userPageButton.setVisibility(View.GONE);
@@ -67,7 +79,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             public void onClick(View v) {
                 user_id = "";
                 user_name = "guest";
-                welome_user.setText("Welcome "+user_name);
+                welome_user.setText("Welcome " + user_name);
                 user_restaurant_name = "";
                 login_button.setVisibility(View.VISIBLE);
                 logout_button.setVisibility(View.GONE);
@@ -84,7 +96,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
         search_button.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { start_Search();}
+            public void onClick(View v) {
+                start_Search();
+            }
         });
 
 
@@ -95,17 +109,16 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1) {
-            if(resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 user_id = data.getStringExtra("USER_ID");
-                isloggedin = data.getBooleanExtra("ISLOGGEDIN",false);
+                isloggedin = data.getBooleanExtra("ISLOGGEDIN", false);
                 check_loggedin();
             }
             if (resultCode == RESULT_CANCELED) {
                 //might be usefull later
             }
-        }
-        else if (requestCode == 5){
-            if(resultCode == RESULT_OK){
+        } else if (requestCode == 5) {
+            if (resultCode == RESULT_OK) {
                 // search resault here
             }
 
@@ -113,19 +126,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
 
-    private void check_loggedin(){
+    private void check_loggedin() {
         // if logged in get username from db
-        if(isloggedin == true){
+        if (isloggedin == true) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                     user_name = snapshot.child("username").getValue().toString();
-                    isowner = (boolean)snapshot.child("owner").getValue();
+                    isowner = (boolean) snapshot.child("owner").getValue();
                     user_restaurant_name = snapshot.child("restaurant_name").getValue().toString();
                     login_button.setVisibility(View.GONE);
                     logout_button.setVisibility(View.VISIBLE);
-                    welome_user.setText("Welcome "+user_name);
+                    welome_user.setText("Welcome " + user_name);
                     welome_user.setVisibility(View.VISIBLE);
                     userPageButton.setVisibility(View.VISIBLE);
                 }
@@ -135,17 +148,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                 }
             });
-        }
-        else{
+        } else {
             login_button.setVisibility(View.VISIBLE);
         }
     }
 
 
-
     private void start_Login() {
         Intent intent = new Intent(this, Login.class);
-        startActivityForResult(intent,1);
+        startActivityForResult(intent, 1);
 
     }
 
@@ -155,39 +166,102 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
-    private void start_Search(){
+    private void start_Search() {
         Intent intent = new Intent(this, Search.class);
-        startActivityForResult(intent,5);
+        startActivityForResult(intent, 5);
 
     }
 
-    public static String get_user_id(){
+    public static String get_user_id() {
         return user_id;
     }
-    public static String get_user_name(){
+
+    public static String get_user_name() {
         return user_name;
     }
-    public static boolean get_isowner(){
+
+    public static boolean get_isowner() {
         return isowner;
     }
+
     public static boolean get_isloggedin() {
         return isloggedin;
     }
-    public static String get_user_restaurant_name(){
+
+    public static String get_user_restaurant_name() {
         return user_restaurant_name;
     }
-    public static void set_user_restaurant_name(String ress_name){
+
+    public static void set_user_restaurant_name(String ress_name) {
         user_restaurant_name = ress_name;
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        LatLng TelAviv = new LatLng(32.0853, 34.7818);
-        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(TelAviv));
-        LatLng RamatGan = new LatLng(32.080799, 34.794508);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(13).build();
-        this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            enableUserLocation();
+            zoomToUserLoc();
+        } else {
+//            LatLng TelAviv = new LatLng(32.0853, 34.7818);
+//            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(TelAviv));
+//            LatLng RamatGan = new LatLng(32.080799, 34.794508);
+//            CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(13).build();
+//            this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+            }
+        }
     }
 
+    private void enableUserLocation() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        this.googleMap.setMyLocationEnabled(true);
+    }
+
+    private void zoomToUserLoc() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
+        locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+            }
+        });
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == LOCATION_REQUEST_CODE){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                enableUserLocation();
+                zoomToUserLoc();
+            } else {
+
+            }
+        }
+    }
 }
