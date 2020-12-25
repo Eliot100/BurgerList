@@ -41,7 +41,7 @@ public class CreateRestaurant extends AppCompatActivity {
     private EditText phoneNum, RestName, RestLat, RestLng, RestAddras;
     private TextView Restcity;
     private Switch LocSwitch;
-    private LatLng RestLocation;
+    private LatLng RestLocation = null;
     private FirebaseAuth mAuth;
     private String city;
 
@@ -121,7 +121,14 @@ public class CreateRestaurant extends AppCompatActivity {
             if(resultCode == RESULT_OK){
                 Restcity.setText(data.getStringExtra("Search_Res"));
                 city = data.getStringExtra("Search_Res");
-
+            }
+            if (resultCode == RESULT_CANCELED) {
+                //might be usefull later
+            }
+        } else if(requestCode == requestRestLoc){
+            if(resultCode == RESULT_OK){
+                RestLocation = new LatLng(Double.parseDouble(data.getStringExtra("Lat")),
+                        Double.parseDouble(data.getStringExtra("Lng")));
             }
             if (resultCode == RESULT_CANCELED) {
                 //might be usefull later
@@ -130,10 +137,6 @@ public class CreateRestaurant extends AppCompatActivity {
 
 
     }
-
-
-
-
 
     private boolean isLegal(String restName) {
         return true; // for now all names are good
@@ -152,10 +155,23 @@ public class CreateRestaurant extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Incorrect phone number", Toast.LENGTH_SHORT).show();
             return false;
         }
+        else if(RestLocation != null ){
+            Toast.makeText(getApplicationContext(), "correct Location", Toast.LENGTH_SHORT).show();
+        }
+        else{
+           try{
+               RestLocation = new LatLng(Double.parseDouble(RestLat.getText().toString()),
+                       Double.parseDouble(RestLng.getText().toString()));
+
+           } catch (Exception e) {
+               Toast.makeText(getApplicationContext(), "can't create location", Toast.LENGTH_SHORT).show();
+               return false;
+           }
+        }
 
         String owner_id = MainActivity.get_user_id();
-        LatLng latlng = new LatLng(150,150);// default currently does nothing.
-        Restaurant ress = new Restaurant(owner_id,RestName.getText().toString(),phoneNum.getText().toString(),latlng);
+        Restaurant ress = new Restaurant(owner_id,RestName.getText().toString(),phoneNum.getText().toString(),RestLocation);
+
 
 
             FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -189,29 +205,10 @@ public class CreateRestaurant extends AppCompatActivity {
         finish();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-    // to do
     private void CreateRestLocation() {
-//        Intent intentRestLoc = new Intent(this, GetMyRestaurantLocation.class);
-//        try {
-//            intentRestLoc.putExtra("currentLocation","150.0 150.0" );//currentLocation.toString()
-//        } catch (Exception e){
-//            Toast.makeText(getApplicationContext(),"can not set location", Toast.LENGTH_SHORT).show();
-//            return;
-//        }
-//        Toast.makeText(getApplicationContext(),"moving to get restaurant location", Toast.LENGTH_SHORT).show();
-//        startActivityForResult(intentRestLoc, requestRestLoc);
+        Toast.makeText(getApplicationContext(),"moving to get restaurant location", Toast.LENGTH_SHORT).show();
+        Intent intentRestLoc = new Intent(this, getLocationActivity.class);
+        startActivityForResult(intentRestLoc, requestRestLoc);
     }
 
 
