@@ -20,8 +20,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
@@ -43,6 +46,8 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     static boolean isloggedin = false;
     GoogleMap googleMap;
     FusedLocationProviderClient fusedLocationProviderClient;
+    private FirebaseDatabase database;
+    private DatabaseReference ref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -199,23 +204,59 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            enableUserLocation();
-            zoomToUserLoc();
-        } else {
+//        LatLng TelAviv = new LatLng(32.0853, 34.7818);
+//        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(TelAviv));
+        LatLng RamatGan = new LatLng(32.080799, 34.794508);
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(13).build();
+        this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        try {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                enableUserLocation();
+                zoomToUserLoc();
+            } else {
 //            LatLng TelAviv = new LatLng(32.0853, 34.7818);
 //            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(TelAviv));
 //            LatLng RamatGan = new LatLng(32.080799, 34.794508);
 //            CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(13).build();
 //            this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+                } else {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+                }
             }
+        } catch (Exception e) {
+
         }
+
+        database = FirebaseDatabase.getInstance();
+        ref = database.getReference("Restaurants");
+        ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                googleMap.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    String name = (String) snapshot.child("name").getValue().toString();
+                    String latitude = (String) snapshot.child("location").child("latitude").getValue().toString();
+                    String longitude = (String) snapshot.child("location").child("longitude").getValue().toString();
+                    MarkerOptions markerOptions = new MarkerOptions();
+                    markerOptions.position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)));
+                    markerOptions.title(name);
+                    markerOptions.snippet("ok");
+                    googleMap.addMarker(markerOptions);
+//                    markerOptions.draggable(true);
+//                    Marker locationMarker = googleMap.addMarker(markerOptions);
+//                    locationMarker.setDraggable(true);
+//                    locationMarker.showInfoWindow();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     private void enableUserLocation() {

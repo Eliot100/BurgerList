@@ -103,8 +103,8 @@ public class Signup extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
                                                 Toast.makeText(Signup.this, "You have been registered", Toast.LENGTH_SHORT).show();
-                                                FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("My rated ress").
-                                                        child("First").setValue("5");
+//                                                FirebaseDatabase.getInstance().getReference("Users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("My rated ress").
+//                                                        child("First").setValue("5");
                                                 Go_to_Login();
                                                 }
                                             else{

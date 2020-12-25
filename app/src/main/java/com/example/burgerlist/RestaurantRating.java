@@ -6,7 +6,8 @@ public class RestaurantRating {
     private ArrayList<Ret> ratings;
 
     public RestaurantRating() {
-        ratings = new ArrayList<>();
+        ratings = new ArrayList<Ret>();
+        ratings.add(new Ret("xyZ2M2lZhnfcKPxOHs3aoFuPBm93", 10));
     }
 
     public int getSize() {

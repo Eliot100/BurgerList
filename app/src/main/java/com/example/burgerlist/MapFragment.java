@@ -16,7 +16,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapFragment extends Fragment {
-    LatLng loc = null;
+    LatLng loc;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

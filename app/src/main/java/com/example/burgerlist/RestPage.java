@@ -154,7 +154,7 @@ public class RestPage extends AppCompatActivity {
                     new Thread() {
                         public void run() {
                             try {
-                                Thread.sleep(50);
+                                Thread.sleep(10);
                             } catch (Exception e){
                                 Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             }
@@ -167,11 +167,6 @@ public class RestPage extends AppCompatActivity {
             }
         });
     }
-
-    private void addRating(String user_id, int numStars) {
-
-    }
-
 
     public void  display(){
         adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);
