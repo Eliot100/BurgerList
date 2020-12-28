@@ -19,6 +19,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     private ArrayList<String> rest_name_list;
     private ArrayList<String> rating_list;
     private ArrayList<String> city_list;
+    private ArrayList<String> distance_list;
 
 
     class SearchViewHolder extends RecyclerView.ViewHolder {
@@ -37,12 +38,13 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         }
     }
 
-    public SearchAdapter(Context context, ArrayList<String> rest_id_list, ArrayList<String> rest_name_list, ArrayList<String> rating_list ,ArrayList<String> city_list) {
+    public SearchAdapter(Context context, ArrayList<String> rest_id_list, ArrayList<String> rest_name_list, ArrayList<String> rating_list ,ArrayList<String> city_list, ArrayList<String> distance_list) {
         this.context = context;
         this.rest_id_list = rest_id_list;
         this.rest_name_list = rest_name_list;
         this.rating_list = rating_list;
         this.city_list = city_list;
+        this.distance_list = distance_list;
     }
 
 
@@ -56,6 +58,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     public void onBindViewHolder(@NonNull SearchViewHolder holder, int position) {
         holder.rest_name.setText(rest_name_list.get(position));
         holder.city.setText(city_list.get(position));
+        holder.distance.setText(distance_list.get(position)+" km");
 
         // need picture for logo and distance here.
     }
