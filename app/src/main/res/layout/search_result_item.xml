@@ -27,12 +27,12 @@
             android:layout_height="wrap_content"
             android:text="Distance"
             />
+
         <TextView
-            android:id="@+id/rating_item"
+            android:id="@+id/city_item"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Rating"
-            />
+            android:text="City" />
 
 
         </LinearLayout>

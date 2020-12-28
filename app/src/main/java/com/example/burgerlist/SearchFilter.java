@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -25,7 +26,6 @@ import java.util.ArrayList;
 public class SearchFilter extends AppCompatActivity {
     private EditText search_bar;
     private RecyclerView result_view;
-    private Button switch_search_type_btn;
     private Switch kosher_swt;
     private Switch saturday_swt;
     private Switch vegan_swt;
@@ -37,6 +37,9 @@ public class SearchFilter extends AppCompatActivity {
     private ArrayList<String> rest_name_list;
     private ArrayList<String> rating_list;
     private ArrayList<String> rest_logo_list;
+    private ArrayList<String> city_list;
+
+    String current_search_text="";
 
 
 
@@ -48,7 +51,6 @@ public class SearchFilter extends AppCompatActivity {
         // initializing variables
         search_bar = (EditText)findViewById(R.id.search_bar_edit_text);
         result_view = (RecyclerView)findViewById(R.id.result_recylcerview);
-        switch_search_type_btn = (Button)findViewById(R.id.switch_search_btn);
         kosher_swt = (Switch)findViewById(R.id.kosher_switch);
         saturday_swt = (Switch)findViewById(R.id.saturday_switch);
         vegan_swt = (Switch)findViewById(R.id.vegan_switch);
@@ -57,6 +59,9 @@ public class SearchFilter extends AppCompatActivity {
         rating_list =  new ArrayList<String>();
         rest_logo_list =  new ArrayList<String>();
         rest_id_list = new ArrayList<String>();
+        city_list = new ArrayList<String>();
+
+
 
         ref = FirebaseDatabase.getInstance().getReference();
 
@@ -80,16 +85,50 @@ public class SearchFilter extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable s) {
                 if(s.toString().isEmpty() == false){
+                    current_search_text = s.toString();
                     update_list(s.toString());
                 }else{
                     rest_logo_list.clear();
                     rest_name_list.clear();
                     rating_list.clear();
                     result_view.removeAllViews();
+                    city_list.clear();
                 }
 
             }
         });
+
+        kosher_swt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                update_list(current_search_text);
+            }
+        });
+
+        saturday_swt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                update_list(current_search_text);
+            }
+        });
+
+        vegan_swt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                update_list(current_search_text);
+            }
+        });
+
+        vegetarian_swt.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                update_list(current_search_text);
+            }
+        });
+
+
+
+
     }
 
     private void update_list(String usersearch) {
@@ -98,36 +137,104 @@ public class SearchFilter extends AppCompatActivity {
         ref.child("Restaurants").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int limit = 0;
+                int current = 0;
+                boolean deleted = false;
                 rest_logo_list.clear();
                 rest_name_list.clear();
                 rating_list.clear();
+                city_list.clear();
                 result_view.removeAllViews();
 
+
                 for( DataSnapshot snap: snapshot.getChildren()){
+                    deleted = false;
                     String restname = snap.child("name").getValue().toString();
                     String uid = snap.child("ownerId").getValue().toString();
                     String rating = snap.child("currentRating").getValue().toString();
+                    String city = snap.child("city").getValue().toString();
+
+                    //filters
+                    boolean kosher =(boolean) snap.child("filter").child("kosher").getValue();
+                    boolean saturday = (boolean)snap.child("filter").child("saturday").getValue();
+                    boolean vegan = (boolean)snap.child("filter").child("vegan").getValue();
+                    boolean vegetarian = (boolean) snap.child("filter").child("vegetarian").getValue();
+
                     //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
 
                     if(restname.toLowerCase().contains(usersearch.toLowerCase())){
                         rest_name_list.add(restname);
                         rest_id_list.add(uid);
                         rating_list.add(rating);
+                        city_list.add(city);
                         //rest_logo_list.add(logo);   //logo when storage ready
-                        limit++;
+                        current++;
+
+                    }else if(city.toLowerCase().contains((usersearch.toLowerCase()))){
+                        rest_name_list.add(restname);
+                        rest_id_list.add(uid);
+                        rating_list.add(rating);
+                        city_list.add(city);
+                        //rest_logo_list.add(logo);   //logo when storage ready
+                        current++;
+                    }
+
+                    // filters
+                    if(kosher_swt.isChecked() == true){
+                        if(kosher == false){
+                            rest_name_list.remove(restname);
+                            rest_id_list.remove(uid);
+                            rating_list.remove(rating);
+                            city_list.remove(city);
+                            deleted = true;
+                        }
+                    }
+
+                    if(saturday_swt.isChecked() == true){
+                        if(saturday == false){
+                            if(deleted == false){
+                                rest_name_list.remove(restname);
+                                rest_id_list.remove(uid);
+                                rating_list.remove(rating);
+                                city_list.remove(city);
+                                deleted = true;
+                            }
+                        }
+                    }
+
+                    if(vegan_swt.isChecked() == true){
+                        if(vegan == false){
+                            if(deleted == false){
+                                rest_name_list.remove(restname);
+                                rest_id_list.remove(uid);
+                                rating_list.remove(rating);
+                                city_list.remove(city);
+                                deleted = true;
+                            }
+                        }
+                    }
+
+                    if(vegetarian_swt.isChecked() == true){
+                        if(vegetarian == false){
+                            if(deleted == false){
+                                rest_name_list.remove(restname);
+                                rest_id_list.remove(uid);
+                                rating_list.remove(rating);
+                                city_list.remove(city);
+                                deleted = true;
+                            }
+                        }
                     }
 
 
-                    if(limit == 20){
+                    if(current == 20){
                         break;
                     }
 
                 }
-                searchAdapter = new SearchAdapter(SearchFilter.this , rest_id_list ,rest_name_list ,rating_list);
+
+
+                searchAdapter = new SearchAdapter(SearchFilter.this , rest_id_list ,rest_name_list ,rating_list,city_list);
                 result_view.setAdapter(searchAdapter);
-                String temp = ""+searchAdapter.getItemCount();
-                //Toast.makeText(getApplicationContext(), temp, Toast.LENGTH_LONG).show();
             }
 
             @Override

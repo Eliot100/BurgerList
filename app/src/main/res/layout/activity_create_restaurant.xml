@@ -24,14 +24,12 @@
         android:id="@+id/locationButton"
         android:layout_width="136dp"
         android:layout_height="92dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginBottom="268dp"
+        android:layout_marginTop="244dp"
         android:text="add restaurant location"
         android:visibility="invisible"
         app:autoSizeTextType="uniform"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.458"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/street_text" />
 
@@ -47,13 +45,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.06" />
+        app:layout_constraintVertical_bias="0.007" />
 
     <EditText
         android:id="@+id/phoneNum"
         android:layout_width="224dp"
         android:layout_height="67dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginBottom="592dp"
         android:autoSizeTextType="uniform"
         android:ems="10"
         android:hint="Restaurant phone number"
@@ -62,8 +60,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/RestName"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/RestName" />
 
     <EditText
         android:id="@+id/RestLng"
@@ -76,15 +73,16 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.457"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RestLat"
-        app:layout_constraintVertical_bias="0.071" />
+        app:layout_constraintVertical_bias="0.024" />
 
     <EditText
         android:id="@+id/RestLat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
         android:autoSizeTextType="uniform"
         android:ems="10"
         android:hint="restaurant latitude (Optional)"
@@ -92,28 +90,28 @@
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.457"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNum"
-        app:layout_constraintVertical_bias="0.321" />
+        app:layout_constraintTop_toBottomOf="@+id/street_text"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Switch
         android:id="@+id/LocSwitch"
         android:layout_width="347dp"
         android:layout_height="80dp"
-        android:text="use google map to set restaurant location"
         android:autoSizeTextType="uniform"
+        android:text="use google map to set restaurant location"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RestLng"
-        app:layout_constraintVertical_bias="0.233" />
+        app:layout_constraintVertical_bias="0.713" />
 
     <EditText
         android:id="@+id/street_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="284dp"
+        android:layout_marginTop="9dp"
         android:ems="10"
         android:hint="Street and number (Optional)"
         android:inputType="textPersonName"
@@ -121,21 +119,58 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.457"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/city_text" />
 
     <TextView
         android:id="@+id/city_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginTop="8dp"
         android:text="Press here to choose city"
         android:textSize="18sp"
-        app:layout_constraintBottom_toBottomOf="@+id/street_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.438"
+        app:layout_constraintHorizontal_bias="0.48"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNum"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/phoneNum" />
+
+    <Switch
+        android:id="@+id/kosher_switch_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="24dp"
+        android:text="Kosher"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/RestLng" />
+
+    <Switch
+        android:id="@+id/saturday_switch_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="80dp"
+        android:layout_marginTop="24dp"
+        android:text="Open on saturday"
+        app:layout_constraintStart_toEndOf="@+id/kosher_switch_create"
+        app:layout_constraintTop_toBottomOf="@+id/RestLng" />
+
+    <Switch
+        android:id="@+id/vegetarian_switch_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="32dp"
+        android:text="Vegetarian"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/kosher_switch_create" />
+
+    <Switch
+        android:id="@+id/vegan_switch_create"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="95dp"
+        android:layout_marginTop="24dp"
+        android:text="Vegan"
+        app:layout_constraintStart_toEndOf="@+id/vegetarian_switch_create"
+        app:layout_constraintTop_toBottomOf="@+id/saturday_switch_create" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
