@@ -102,7 +102,7 @@ public class CreateRestaurant extends AppCompatActivity {
                     returnToUserPage();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "we are having trouble processing your request please try again.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "we are having trouble processing your request please try again.", Toast.LENGTH_LONG).show();
                 }
             }
         });

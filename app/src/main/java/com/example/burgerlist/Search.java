@@ -85,8 +85,7 @@ public class Search extends AppCompatActivity {
                 }
                 else{
                     go_to_search_result(filterd_list.get(position));
-                }
-   ;
+                };
 
             }
         });

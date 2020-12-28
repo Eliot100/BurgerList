@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/rest_logo_image"
+        android:layout_width="62dp"
+        android:layout_height="58dp"
+        android:src="@mipmap/ic_launcher_round" />
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/restname_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Rest name"
+                />
+        <TextView
+            android:id="@+id/distance_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Distance"
+            />
+        <TextView
+            android:id="@+id/rating_item"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Rating"
+            />
+
+
+        </LinearLayout>
+
+</LinearLayout>

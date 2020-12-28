@@ -49,10 +49,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         login_button = (Button) findViewById(R.id.login_button);
         logout_button = (Button) findViewById(R.id.logout_button);
@@ -121,7 +121,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             if (resultCode == RESULT_OK) {
                 // search resault here
             }
-
         }
     }
 
@@ -167,7 +166,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void start_Search() {
-        Intent intent = new Intent(this, Search.class);
+        Intent intent = new Intent(this, SearchFilter.class);
         startActivityForResult(intent, 5);
 
     }
