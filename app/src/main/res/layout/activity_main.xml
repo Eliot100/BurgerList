@@ -81,29 +81,13 @@
         android:id="@+id/restsLoc_text"
         android:layout_width="293dp"
         android:layout_height="33dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="14dp"
         android:autoSizeTextType="uniform"
         android:text="Restaurant By Location"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.238"
+        app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/restsTredingList" />
-
-    <ScrollView
-        android:id="@+id/restsTredingList"
-        android:layout_width="318dp"
-        android:layout_height="145dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.38"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/restsTreding_text">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-    </ScrollView>
+        app:layout_constraintTop_toBottomOf="@+id/trending_recycle_view" />
 
     <fragment
         android:id="@+id/map"
@@ -117,5 +101,14 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/restsLoc_text"
         app:layout_constraintVertical_bias="0.666" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trending_recycle_view"
+        android:layout_width="362dp"
+        android:layout_height="192dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/restsTreding_text" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

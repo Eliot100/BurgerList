@@ -136,7 +136,6 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
 
     private void update_list(String usersearch) {
 
-
         ref.child("Restaurants").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
