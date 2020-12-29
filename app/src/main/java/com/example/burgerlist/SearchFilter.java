@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -24,7 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
-public class SearchFilter extends AppCompatActivity {
+public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnRestClickListner {
     private EditText search_bar;
     private RecyclerView result_view;
     private Switch kosher_swt;
@@ -44,8 +45,6 @@ public class SearchFilter extends AppCompatActivity {
     String current_search_text="";
     double defult_lat = 32.086619;
     double defult_lon = 34.789621;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,10 +130,6 @@ public class SearchFilter extends AppCompatActivity {
                 update_list(current_search_text);
             }
         });
-
-
-
-
     }
 
     private void update_list(String usersearch) {
@@ -245,18 +240,13 @@ public class SearchFilter extends AppCompatActivity {
                             }
                         }
                     }
-
-
                     if(current == 20){
                         break;
                     }
-
                 }
-
-                searchAdapter = new SearchAdapter(SearchFilter.this , rest_id_list ,rest_name_list ,rating_list,city_list , distance_list);
+                searchAdapter = new SearchAdapter(SearchFilter.this , rest_id_list ,rest_name_list ,rating_list,city_list , distance_list , SearchFilter.this::onRestClick);
                 result_view.setAdapter(searchAdapter);
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -284,5 +274,12 @@ public class SearchFilter extends AppCompatActivity {
         distance = Math.pow(distance, 2) + Math.pow(height, 2);
 
         return Math.sqrt(distance);
+    }
+
+    @Override
+    public void onRestClick(int position) {
+        Intent intent = new Intent(this, RestPage.class);
+        intent.putExtra("Owner_id", rest_id_list.get(position));
+        startActivityForResult(intent,7);
     }
 }
