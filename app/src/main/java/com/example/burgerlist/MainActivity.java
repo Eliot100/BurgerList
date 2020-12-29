@@ -179,7 +179,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                     distance_list.add(distance);
                     //rest_logo_list.add(logo);   //logo when storage ready
 
-                    if(current == 20){
+                    if(current == 10){
                         break;
                     }
                 }
