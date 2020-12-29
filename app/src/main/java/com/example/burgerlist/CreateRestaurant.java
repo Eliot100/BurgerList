@@ -182,11 +182,16 @@ public class CreateRestaurant extends AppCompatActivity {
             FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
-                    FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("city").setValue(city);
                     FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("kosher").setValue(kosher_swt.isChecked());
                     FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("saturday").setValue(saturday_swt.isChecked());
                     FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("vegan").setValue(vegan_swt.isChecked());
                     FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("vegetarian").setValue(vegetarian_swt.isChecked());
+                    if(city.equals("--Not in city--")){
+                        FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("city").setValue("");
+                    }
+                    else{
+                        FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("city").setValue(city);
+                    }
                     Toast.makeText(getApplicationContext(), "successfully added restaurant to app", Toast.LENGTH_LONG).show();
 
                 }

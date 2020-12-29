@@ -13,14 +13,16 @@ import android.widget.SearchView;
 import android.widget.Toast;
 
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Search extends AppCompatActivity {
-    ListView listView;
-    ArrayAdapter adapter;
-    ArrayList<String> citys;
-    SearchView searchView;
+    private ListView listView;
+    private ArrayAdapter adapter;
+    private ArrayList<String> citys;
+    private SearchView searchView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,23 +35,8 @@ public class Search extends AppCompatActivity {
         boolean from_creat_ress = this.getIntent().getBooleanExtra("FLAG",false);
 
         //reading csv file of all israel citys
-         // will be done later
-
-         //place holder for citys
-        citys.add("jerusalem");
-        citys.add("tel aviv");
-        citys.add("hod hasharon");
-        citys.add("herzliya");
-        citys.add("Raanana");
-        citys.add("kfar saba");
-        citys.add("natania");
-        citys.add("petah tikva");
-        citys.add("hadera");
-        citys.add("haifa");
-        citys.add("Tiberias");
-        citys.add("eilat");
-        citys.add("Sderot");
-        citys.add("kfar hanassi");
+        citys.add("--Not in city--");
+         read_csv();
 
         adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1,citys);
 
@@ -89,6 +76,42 @@ public class Search extends AppCompatActivity {
 
             }
         });
+
+    }
+
+    private void read_csv() {
+        String line = "";
+        String splitBy = ",";
+        String city_name;
+        int counter=0;
+
+        try
+        {
+            //parsing a CSV file into BufferedReader class constructor
+            InputStream input = getResources().openRawResource(R.raw.citys);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+
+            while ((line = reader.readLine()) != null)   //returns a Boolean value
+           {
+
+                String[] employee = line.split(splitBy);    // use comma as separator
+               if(counter>0&&!employee[3].isEmpty()){
+                   city_name = employee[3];
+                   city_name = city_name.toLowerCase();
+                   city_name = city_name.trim();
+                   if(city_name.isEmpty() == false){
+                       citys.add(city_name);
+                   }
+
+               }
+               counter++;
+            }
+        }
+        catch (Exception e)
+        {
+            Toast.makeText(getApplicationContext(), "we are having trouble processing your request please try again.", Toast.LENGTH_SHORT).show();
+        }
+
 
     }
 
