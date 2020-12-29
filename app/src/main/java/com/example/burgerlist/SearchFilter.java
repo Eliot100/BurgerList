@@ -43,6 +43,8 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
     private ArrayList<String> distance_list;
 
     String current_search_text="";
+    // defaul location for user if gps iskill
+    // tel aviv כיכר המדינה
     double defult_lat = 32.086619;
     double defult_lon = 34.789621;
 
