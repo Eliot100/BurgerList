@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Intent;
@@ -33,6 +36,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private final int LOCATION_REQUEST_CODE = 10;
     Button login_button, logout_button;
@@ -44,26 +52,46 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     static String user_restaurant_name;
     static boolean isowner;
     static boolean isloggedin = false;
+    private RecyclerView trending_view;
+    private SearchAdapter searchAdapter;
+    private ArrayList<String> rest_id_list;
+    private ArrayList<String> rest_name_list;
+    private ArrayList<String> rating_list;
+    private ArrayList<String> rest_logo_list;
+    private ArrayList<String> city_list;
+    private ArrayList<String> distance_list;
     GoogleMap googleMap;
     FusedLocationProviderClient fusedLocationProviderClient;
     private FirebaseDatabase database;
     private DatabaseReference ref;
+    // defaul location for user if gps iskill
+    // tel aviv כיכר המדינה
+    double defult_lat = 32.086619;
+    double defult_lon = 34.789621;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         login_button = (Button) findViewById(R.id.login_button);
         logout_button = (Button) findViewById(R.id.logout_button);
         userPageButton = (Button) findViewById(R.id.userPageButton);
         search_button = (Button) findViewById(R.id.search_button);
         welome_user = (TextView) findViewById(R.id.user_welcom_text);
+        trending_view = (RecyclerView)findViewById(R.id.trending_recycle_view);
+
+        rest_name_list =  new ArrayList<String>();
+        rating_list =  new ArrayList<String>();
+        rest_logo_list =  new ArrayList<String>();
+        rest_id_list = new ArrayList<String>();
+        city_list = new ArrayList<String>();
+        distance_list = new ArrayList<String>();
 
 
         welome_user.setText("Welcome " + user_name);
@@ -72,6 +100,15 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         userPageButton.setVisibility(View.GONE);
         check_loggedin();
 
+
+        //setting up recycle view
+        trending_view.setHasFixedSize(true);
+        trending_view.setLayoutManager(new LinearLayoutManager(this));
+        trending_view.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        update_trending();
+
+        // listeners
         login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,6 +146,70 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    private void update_trending() {
+        DatabaseReference ref;
+        ref = FirebaseDatabase.getInstance().getReference();
+        ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int current = 0;
+                boolean deleted = false;
+                rest_logo_list.clear();
+                rest_name_list.clear();
+                rating_list.clear();
+                city_list.clear();
+                distance_list.clear();
+                trending_view.removeAllViews();
+
+                for( DataSnapshot snap: snapshot.getChildren()){
+                    deleted = false;
+                    String restname = snap.child("name").getValue().toString();
+                    String uid = snap.child("ownerId").getValue().toString();
+                    String rating = snap.child("currentRating").getValue().toString();
+                    String city = snap.child("city").getValue().toString();
+                    String rest_lat = snap.child("location").child("latitude").getValue().toString();
+                    String rest_lon = snap.child("location").child("longitude").getValue().toString();
+
+                    //calculating distance from user to restaurant
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    double d =distance(defult_lat,Double.parseDouble(rest_lat),defult_lon,Double.parseDouble(rest_lon),0,0)/1000;
+                    String distance = String.valueOf((df.format(d)));
+
+                    //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
+
+                    rest_name_list.add(restname);
+                    rest_id_list.add(uid);
+                    rating_list.add(rating);
+                    city_list.add(city);
+                    distance_list.add(distance);
+                    //rest_logo_list.add(logo);   //logo when storage ready
+
+                    if(current == 10){
+                        break;
+                    }
+                }
+                Collections.swap(rest_name_list,0,rest_name_list.size()-1);
+                Collections.swap(rest_id_list,0,rest_id_list.size()-1);
+                Collections.swap(rating_list,0,rating_list.size()-1);
+                Collections.swap(city_list,0,city_list.size()-1);
+                Collections.swap(distance_list,0,distance_list.size()-1);
+                searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
+                trending_view.setAdapter(searchAdapter);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void onRestClick(int position) {
+        Intent intent = new Intent(this, RestPage.class);
+        intent.putExtra("Owner_id", rest_id_list.get(position));
+        startActivityForResult(intent,7);
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -126,7 +227,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             if (resultCode == RESULT_OK) {
                 // search resault here
             }
-
         }
     }
 
@@ -172,7 +272,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void start_Search() {
-        Intent intent = new Intent(this, Search.class);
+        Intent intent = new Intent(this, SearchFilter.class);
         startActivityForResult(intent, 5);
 
     }
@@ -304,5 +404,26 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         }
+    }
+    // code take from https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
+    // code used only to calculate distance given 2 sets of lat and lon points
+    public static double distance(double lat1, double lat2, double lon1, double lon2, double el1, double el2) {
+        el1 = 0;
+        el2 = 0;
+        final int R = 6371; // Radius of the earth
+
+        double latDistance = Math.toRadians(lat2 - lat1);
+        double lonDistance = Math.toRadians(lon2 - lon1);
+        double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
+                + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
+                * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        double distance = R * c * 1000; // convert to meters
+
+        double height = el1 - el2;
+
+        distance = Math.pow(distance, 2) + Math.pow(height, 2);
+
+        return Math.sqrt(distance);
     }
 }

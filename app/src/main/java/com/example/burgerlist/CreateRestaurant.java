@@ -44,6 +44,7 @@ public class CreateRestaurant extends AppCompatActivity {
     private LatLng RestLocation = null;
     private FirebaseAuth mAuth;
     private String city;
+    private Switch kosher_swt, vegan_swt, saturday_swt, vegetarian_swt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,10 @@ public class CreateRestaurant extends AppCompatActivity {
         LocSwitch = (Switch) findViewById(R.id.LocSwitch);
         locationButton = (Button)findViewById(R.id.locationButton);
         createRestButton = (Button)findViewById(R.id.createRestButton);
+        kosher_swt = (Switch)findViewById(R.id.kosher_switch_create);
+        saturday_swt = (Switch)findViewById(R.id.saturday_switch_create);
+        vegan_swt = (Switch)findViewById(R.id.vegan_switch_create);
+        vegetarian_swt = (Switch)findViewById(R.id.vegetarian_switch_create);
 
 
         // show or hide lat lon input text depending on user choise.
@@ -102,7 +107,7 @@ public class CreateRestaurant extends AppCompatActivity {
                     returnToUserPage();
                 }
                 else{
-                    Toast.makeText(getApplicationContext(), "we are having trouble processing your request please try again.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "we are having trouble processing your request please try again.", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -177,6 +182,16 @@ public class CreateRestaurant extends AppCompatActivity {
             FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).setValue(ress).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
+                    FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("kosher").setValue(kosher_swt.isChecked());
+                    FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("saturday").setValue(saturday_swt.isChecked());
+                    FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("vegan").setValue(vegan_swt.isChecked());
+                    FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("filter").child("vegetarian").setValue(vegetarian_swt.isChecked());
+                    if(city.equals("--Not in city--")){
+                        FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("city").setValue("");
+                    }
+                    else{
+                        FirebaseDatabase.getInstance().getReference("Restaurants").child(owner_id).child("city").setValue(city);
+                    }
                     Toast.makeText(getApplicationContext(), "successfully added restaurant to app", Toast.LENGTH_LONG).show();
 
                 }
