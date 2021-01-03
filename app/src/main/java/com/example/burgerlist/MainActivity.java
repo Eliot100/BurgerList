@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -68,16 +70,22 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     // tel aviv כיכר המדינה
     double defult_lat = 32.086619;
     double defult_lon = 34.789621;
+    protected static final int MapDiffZoom = 10;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        setGoogleMapPermission();
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        setLocationPermission();
+        try {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        } catch ( Exception e){}
 
         login_button = (Button) findViewById(R.id.login_button);
         logout_button = (Button) findViewById(R.id.logout_button);
@@ -106,7 +114,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         trending_view.setLayoutManager(new LinearLayoutManager(this));
         trending_view.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-        update_trending();
+//        update_trending();
 
         // listeners
         login_button.setOnClickListener(new View.OnClickListener() {
@@ -142,72 +150,76 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 start_Search();
             }
         });
-
-
     }
 
-    private void update_trending() {
-        DatabaseReference ref;
-        ref = FirebaseDatabase.getInstance().getReference();
-        ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int current = 0;
-                boolean deleted = false;
-                rest_logo_list.clear();
-                rest_name_list.clear();
-                rating_list.clear();
-                city_list.clear();
-                distance_list.clear();
-                trending_view.removeAllViews();
-
-                for( DataSnapshot snap: snapshot.getChildren()){
-                    deleted = false;
-                    String restname = snap.child("name").getValue().toString();
-                    String uid = snap.child("ownerId").getValue().toString();
-                    String rating = snap.child("currentRating").getValue().toString();
-                    String city = snap.child("city").getValue().toString();
-                    String rest_lat = snap.child("location").child("latitude").getValue().toString();
-                    String rest_lon = snap.child("location").child("longitude").getValue().toString();
-
-                    //calculating distance from user to restaurant
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    double d =distance(defult_lat,Double.parseDouble(rest_lat),defult_lon,Double.parseDouble(rest_lon),0,0)/1000;
-                    String distance = String.valueOf((df.format(d)));
-
-                    //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
-
-                    rest_name_list.add(restname);
-                    rest_id_list.add(uid);
-                    rating_list.add(rating);
-                    city_list.add(city);
-                    distance_list.add(distance);
-                    //rest_logo_list.add(logo);   //logo when storage ready
-
-                    if(current == 10){
-                        break;
-                    }
-                }
-                Collections.swap(rest_name_list,0,rest_name_list.size()-1);
-                Collections.swap(rest_id_list,0,rest_id_list.size()-1);
-                Collections.swap(rating_list,0,rating_list.size()-1);
-                Collections.swap(city_list,0,city_list.size()-1);
-                Collections.swap(distance_list,0,distance_list.size()-1);
-                searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
-                trending_view.setAdapter(searchAdapter);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+    private void setLocationPermission() {
     }
 
-    private void onRestClick(int position) {
-        Intent intent = new Intent(this, RestPage.class);
-        intent.putExtra("Owner_id", rest_id_list.get(position));
-        startActivityForResult(intent,7);
+    private void setGoogleMapPermission() {
     }
+
+//    private void update_trending() {
+//        DatabaseReference ref;
+//        ref = FirebaseDatabase.getInstance().getReference();
+//        ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                int current = 0;
+//                boolean deleted = false;
+//                rest_logo_list.clear();
+//                rest_name_list.clear();
+//                rating_list.clear();
+//                city_list.clear();
+//                distance_list.clear();
+//                trending_view.removeAllViews();
+//
+//                for( DataSnapshot snap: snapshot.getChildren()){
+//                    deleted = false;
+//                    String restname = snap.child("name").getValue().toString();
+//                    String uid = snap.child("ownerId").getValue().toString();
+//                    String rating = snap.child("currentRating").getValue().toString();
+//                    String city = snap.child("city").getValue().toString();
+//                    String rest_lat = snap.child("location").child("latitude").getValue().toString();
+//                    String rest_lon = snap.child("location").child("longitude").getValue().toString();
+//
+//                    //calculating distance from user to restaurant
+//                    DecimalFormat df = new DecimalFormat("#.##");
+//                    double d =distance(defult_lat,Double.parseDouble(rest_lat),defult_lon,Double.parseDouble(rest_lon),0,0)/1000;
+//                    String distance = String.valueOf((df.format(d)));
+//
+//                    //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
+//
+//                    rest_name_list.add(restname);
+//                    rest_id_list.add(uid);
+//                    rating_list.add(rating);
+//                    city_list.add(city);
+//                    distance_list.add(distance);
+//                    //rest_logo_list.add(logo);   //logo when storage ready
+//
+//                    if(current == 10){
+//                        break;
+//                    }
+//                }
+//                Collections.swap(rest_name_list,0,rest_name_list.size()-1);
+//                Collections.swap(rest_id_list,0,rest_id_list.size()-1);
+//                Collections.swap(rating_list,0,rating_list.size()-1);
+//                Collections.swap(city_list,0,city_list.size()-1);
+//                Collections.swap(distance_list,0,distance_list.size()-1);
+//                searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
+//                trending_view.setAdapter(searchAdapter);
+//            }
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//    }
+//
+//    private void onRestClick(int position) {
+//        Intent intent = new Intent(this, RestPage.class);
+//        intent.putExtra("Owner_id", rest_id_list.get(position));
+//        startActivityForResult(intent,7);
+//    }
 
 
     @Override
@@ -229,7 +241,6 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             }
         }
     }
-
 
     private void check_loggedin() {
         // if logged in get username from db
@@ -304,28 +315,19 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
         this.googleMap = googleMap;
-//        LatLng TelAviv = new LatLng(32.0853, 34.7818);
-//        this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(TelAviv));
         LatLng RamatGan = new LatLng(32.080799, 34.794508);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(13).build();
+        CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(MapDiffZoom).build();
         this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         try {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 enableUserLocation();
                 zoomToUserLoc();
+            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
             } else {
-//            LatLng TelAviv = new LatLng(32.0853, 34.7818);
-//            this.googleMap.moveCamera(CameraUpdateFactory.newLatLng(TelAviv));
-//            LatLng RamatGan = new LatLng(32.080799, 34.794508);
-//            CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(13).build();
-//            this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
-                } else {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
-                }
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
             }
         } catch (Exception e) {
 
@@ -389,7 +391,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(Location location) {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MapDiffZoom));
             }
         });
     }

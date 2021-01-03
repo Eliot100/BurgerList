@@ -1,12 +1,14 @@
 package com.example.burgerlist;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -35,13 +37,14 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class RestPage extends AppCompatActivity {
+    private static final int STORAGE_PERMISSION_CODE = 2;
     private String rest_owner_id, rest_name, rest_phone, rest_rating = "5", rest_owner_id2;
     private String timeOfMessage, message, user_name, user_id = "";
     private boolean Current_User_Is_owner, Current_User_Loggedin;
     private boolean disableClick = true;
     private Button addComment_btn, addToList_btn;
     private EditText comment_text;
-    private ImageButton phone_btn, map_btn;
+    private ImageButton phone_btn, map_btn, Updates_btn;
     private TextView ratingScore_text, workingHours_text, restName_title;
     private ScrollView menu_scrollview, comment_scrollview;
     private ListView mListView;
@@ -63,10 +66,11 @@ public class RestPage extends AppCompatActivity {
 
         phone_btn = (ImageButton)findViewById(R.id.phone_button);
         map_btn = (ImageButton)findViewById(R.id.google_map);
+        Updates_btn = (ImageButton)findViewById(R.id.Updates_btn);
         addComment_btn = (Button)findViewById(R.id.addComent_button);
         comment_text = (EditText)findViewById(R.id.addcomment_text);
         ratingScore_text = (TextView)findViewById(R.id.currentReating_text);
-        workingHours_text = (TextView)findViewById(R.id.workinghours_text);
+//        workingHours_text = (TextView)findViewById(R.id.workinghours_text);
         menu_scrollview = (ScrollView)findViewById(R.id.menu_scrollview);
         comment_scrollview = (ScrollView)findViewById(R.id.comment_scrollview);
         restName_title = (TextView)findViewById(R.id.restName_text);
@@ -77,12 +81,61 @@ public class RestPage extends AppCompatActivity {
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
-
-        ratingBar.setNumStars(5);
         get_rest_data();
         rest_owner_id2 = this.getIntent().getStringExtra("Owner_id");
+        OwnerUpdates();
         get_comments();
         rating();
+        ratingBarChange();
+        takeACall();
+    }
+
+    private void OwnerUpdates() {
+        Updates_btn.setVisibility(View.INVISIBLE);
+        Toast.makeText(getApplicationContext(), MainActivity.user_id+" "+rest_owner_id2, Toast.LENGTH_SHORT).show();
+        if(MainActivity.user_id.equals(rest_owner_id2)){
+            Updates_btn.setVisibility(View.VISIBLE);
+            Updates_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(ContextCompat.checkSelfPermission(RestPage.this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                        GoAndUplode();
+                    } else {
+                     requestStoragePermission();
+                    }
+                }
+            });
+        }
+    }
+
+    private void requestStoragePermission() {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(RestPage.this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+            new AlertDialog.Builder(RestPage.this).setTitle("Permission needed").setMessage("This Permission is needed to upload files.")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(RestPage.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    STORAGE_PERMISSION_CODE);
+                        }
+                    }).setNegativeButton("cancel", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).create().show();
+        } else {
+            ActivityCompat.requestPermissions(RestPage.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    STORAGE_PERMISSION_CODE);
+        }
+    }
+
+    private void GoAndUplode() {
+        Intent intent = new Intent(RestPage.this, ResturantUpdatesActivity.class);
+        startActivityForResult(intent, 1);
+    }
+
+    private void ratingBarChange() {
         ref.child("Rating").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
@@ -97,15 +150,51 @@ public class RestPage extends AppCompatActivity {
                 }catch (Exception e){
                     Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                 }
-//                ratingBar.setRating(Float.parseFloat(rest_rating)/2);
+                ratingBar.setRating(Float.parseFloat(rest_rating)/2);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(DatabaseError databaseError) {}
+        });
+        ratingBar.setNumStars(Integer.parseInt( rest_rating));
+    }
 
+    private void rating() {
+        ratingBar.setRating(Float.parseFloat(rest_rating));
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                if(disableClick) {
+                    disableClick = false;
+                    Toast.makeText(getApplicationContext(), "drag again to update rating", Toast.LENGTH_SHORT).show();
+                } else if (!MainActivity.get_user_id().equals("")){
+                    Toast.makeText(getApplicationContext(), "update rating", Toast.LENGTH_SHORT).show();
+                    FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id)
+                            .child("Rating").child(MainActivity.get_user_id()).setValue(ratingBar.getRating()*2);
+                    disableClick = true;
+                    ratingBar.setRating(Float.parseFloat(rest_rating)/2);
+                }
             }
         });
-        takeACall();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if(requestCode == REQUEST_CALL){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                takeACall();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if(requestCode == STORAGE_PERMISSION_CODE){
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Toast.makeText(this, "Permission GRANTED", Toast.LENGTH_SHORT).show();
+                GoAndUplode();
+            } else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private void takeACall() {
@@ -127,46 +216,6 @@ public class RestPage extends AppCompatActivity {
         });
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == REQUEST_CALL){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                takeACall();
-            } else {
-                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    private void rating() {
-        ratingBar.setRating(Float.parseFloat(rest_rating)/2);
-        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-            @Override
-            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                if(disableClick)
-                    disableClick = false;
-                else
-                    if (!MainActivity.get_user_id().equals("")){
-                    Toast.makeText(getApplicationContext(), "update rating", Toast.LENGTH_SHORT).show();
-                    FirebaseDatabase.getInstance().getReference("Restaurants").child(rest_owner_id)
-                            .child("Rating").child(MainActivity.get_user_id()).setValue(ratingBar.getRating()*2);
-                    disableClick = true;
-                    new Thread() {
-                        public void run() {
-                            try {
-                                Thread.sleep(10);
-                            } catch (Exception e){
-                                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                            ratingBar.setRating(Float.parseFloat(rest_rating)/2);
-                        }
-                    }.start();
-
-                }
-
-            }
-        });
-    }
 
     public void  display(){
         adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);

@@ -11,6 +11,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:allowBackup="true"
@@ -19,7 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BurgerList">
-        <activity android:name=".SearchFilter"></activity>
+        <activity android:name=".ResturantUpdatesActivity"></activity>
+        <activity android:name=".SearchFilter" />
         <activity android:name=".getLocationActivity" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.

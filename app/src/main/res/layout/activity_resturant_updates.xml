@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ResturantUpdatesActivity">
+
+    <ScrollView
+        android:id="@+id/progressRestImg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout_editor_absoluteX="163dp"
+        tools:layout_editor_absoluteY="253dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            android:padding="16dp"
+
+            <ImageButton
+                android:id="@+id/return_btn"
+                android:layout_width="52dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.018"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="?attr/actionModeCloseDrawable" />
+
+            <Button
+                android:id="@+id/rest_imgBtn"
+                android:layout_width="123dp"
+                android:layout_height="140dp"
+                android:layout_marginTop="392dp"
+                android:text="Coose Resturant Image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.023"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/return_btn" />
+
+            <ProgressBar
+                android:id="@+id/RestImg_progressBar"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="370dp"
+                android:layout_height="35dp"
+                android:layout_marginTop="40dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.609"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rest_imgBtn" />
+
+            <ImageView
+                android:id="@+id/restImg"
+                android:layout_width="220dp"
+                android:layout_height="206dp"
+
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="380dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/rest_imgBtn"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
