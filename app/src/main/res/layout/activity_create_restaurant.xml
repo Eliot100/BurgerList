@@ -24,7 +24,7 @@
         android:id="@+id/locationButton"
         android:layout_width="136dp"
         android:layout_height="92dp"
-        android:layout_marginTop="244dp"
+        android:layout_marginTop="12dp"
         android:text="add restaurant location"
         android:visibility="invisible"
         app:autoSizeTextType="uniform"
@@ -105,7 +105,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RestLng"
-        app:layout_constraintVertical_bias="0.713" />
+        app:layout_constraintVertical_bias="0.466" />
 
     <EditText
         android:id="@+id/street_text"
@@ -137,8 +137,8 @@
         android:id="@+id/kosher_switch_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="32dp"
         android:text="Kosher"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RestLng" />
@@ -147,8 +147,8 @@
         android:id="@+id/saturday_switch_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="32dp"
         android:text="Open on saturday"
         app:layout_constraintStart_toEndOf="@+id/kosher_switch_create"
         app:layout_constraintTop_toBottomOf="@+id/RestLng" />
@@ -157,8 +157,8 @@
         android:id="@+id/vegetarian_switch_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginTop="28dp"
         android:text="Vegetarian"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/kosher_switch_create" />
@@ -167,8 +167,8 @@
         android:id="@+id/vegan_switch_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="95dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="28dp"
         android:text="Vegan"
         app:layout_constraintStart_toEndOf="@+id/vegetarian_switch_create"
         app:layout_constraintTop_toBottomOf="@+id/saturday_switch_create" />

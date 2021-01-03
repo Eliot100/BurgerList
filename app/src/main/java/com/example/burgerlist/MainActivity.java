@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
@@ -45,6 +46,9 @@ import java.util.Collections;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private final int LOCATION_REQUEST_CODE = 10;
+    private final int LOCATION_PERNISSION_REQUEST_CODE = 1234;
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     Button login_button, logout_button;
     Button userPageButton;
     Button search_button;
@@ -62,7 +66,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<String> rest_logo_list;
     private ArrayList<String> city_list;
     private ArrayList<String> distance_list;
-    GoogleMap googleMap;
+    GoogleMap mMap;
     FusedLocationProviderClient fusedLocationProviderClient;
     private FirebaseDatabase database;
     private DatabaseReference ref;
@@ -71,6 +75,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     double defult_lat = 32.086619;
     double defult_lon = 34.789621;
     protected static final int MapDiffZoom = 10;
+    private boolean locationPermissionGranted = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,14 +83,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_main);
 
 //        setGoogleMapPermission();
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-
-        setLocationPermission();
-        try {
-            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        } catch ( Exception e){}
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         login_button = (Button) findViewById(R.id.login_button);
         logout_button = (Button) findViewById(R.id.logout_button);
@@ -152,10 +153,23 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void setLocationPermission() {
+    private void InitMap() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(MainActivity.this);
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
     }
 
-    private void setGoogleMapPermission() {
+    private void getLocationPermission() {
+        String[] permissions = {FINE_LOCATION, COARSE_LOCATION};
+        if(ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
+                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            if(ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
+                    COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                locationPermissionGranted = true;
+            } else {
+                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERNISSION_REQUEST_CODE);
+            }
+        }
     }
 
     private void update_trending() {
@@ -184,7 +198,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
                     //calculating distance from user to restaurant
                     DecimalFormat df = new DecimalFormat("#.##");
-                    double d =distance(defult_lat,Double.parseDouble(rest_lat),defult_lon,Double.parseDouble(rest_lon),0,0)/1000;
+                    double d = distance(defult_lat, Double.parseDouble(rest_lat), defult_lon, Double.parseDouble(rest_lon),0,0)/1000;
                     String distance = String.valueOf((df.format(d)));
 
                     //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
@@ -315,10 +329,12 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        this.googleMap = googleMap;
+        Toast.makeText(this, "Map is ready",Toast.LENGTH_LONG).show();
+        getLocationPermission();
+        this.mMap = googleMap;
         LatLng RamatGan = new LatLng(32.080799, 34.794508);
         CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(MapDiffZoom).build();
-        this.googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         try {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 enableUserLocation();
@@ -363,17 +379,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void enableUserLocation() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.0
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        this.googleMap.setMyLocationEnabled(true);
+        this.mMap.setMyLocationEnabled(true);
     }
 
     private void zoomToUserLoc() {
@@ -392,22 +402,31 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onSuccess(Location location) {
                 LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MapDiffZoom));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MapDiffZoom));
             }
         });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == LOCATION_REQUEST_CODE){
-            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                enableUserLocation();
-                zoomToUserLoc();
-            } else {
+        locationPermissionGranted = false;
 
+        switch (requestCode){
+            case LOCATION_PERNISSION_REQUEST_CODE:{
+                if(grantResults.length > 0 ){//&& grantResults[0] ==
+                    for(int j = 0; j < grantResults.length; j++){
+                        if(grantResults[j] != PackageManager.PERMISSION_GRANTED){
+                            locationPermissionGranted = false;
+                            return;
+                        }
+                        locationPermissionGranted = true;
+                        InitMap();
+                    }
+                }
             }
         }
     }
+
     // code take from https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
     // code used only to calculate distance given 2 sets of lat and lon points
     public static double distance(double lat1, double lat2, double lon1, double lon2, double el1, double el2) {
