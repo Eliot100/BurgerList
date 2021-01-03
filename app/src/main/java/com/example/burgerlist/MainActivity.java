@@ -77,10 +77,10 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        setGoogleMapPermission();
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+//        setGoogleMapPermission();
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
 
         setLocationPermission();
         try {
@@ -114,7 +114,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         trending_view.setLayoutManager(new LinearLayoutManager(this));
         trending_view.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
 
-//        update_trending();
+        update_trending();
 
         // listeners
         login_button.setOnClickListener(new View.OnClickListener() {
@@ -158,68 +158,69 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     private void setGoogleMapPermission() {
     }
 
-//    private void update_trending() {
-//        DatabaseReference ref;
-//        ref = FirebaseDatabase.getInstance().getReference();
-//        ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                int current = 0;
-//                boolean deleted = false;
-//                rest_logo_list.clear();
-//                rest_name_list.clear();
-//                rating_list.clear();
-//                city_list.clear();
-//                distance_list.clear();
-//                trending_view.removeAllViews();
-//
-//                for( DataSnapshot snap: snapshot.getChildren()){
-//                    deleted = false;
-//                    String restname = snap.child("name").getValue().toString();
-//                    String uid = snap.child("ownerId").getValue().toString();
-//                    String rating = snap.child("currentRating").getValue().toString();
-//                    String city = snap.child("city").getValue().toString();
-//                    String rest_lat = snap.child("location").child("latitude").getValue().toString();
-//                    String rest_lon = snap.child("location").child("longitude").getValue().toString();
-//
-//                    //calculating distance from user to restaurant
-//                    DecimalFormat df = new DecimalFormat("#.##");
-//                    double d =distance(defult_lat,Double.parseDouble(rest_lat),defult_lon,Double.parseDouble(rest_lon),0,0)/1000;
-//                    String distance = String.valueOf((df.format(d)));
-//
-//                    //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
-//
-//                    rest_name_list.add(restname);
-//                    rest_id_list.add(uid);
-//                    rating_list.add(rating);
-//                    city_list.add(city);
-//                    distance_list.add(distance);
-//                    //rest_logo_list.add(logo);   //logo when storage ready
-//
-//                    if(current == 10){
-//                        break;
-//                    }
-//                }
-//                Collections.swap(rest_name_list,0,rest_name_list.size()-1);
-//                Collections.swap(rest_id_list,0,rest_id_list.size()-1);
-//                Collections.swap(rating_list,0,rating_list.size()-1);
-//                Collections.swap(city_list,0,city_list.size()-1);
-//                Collections.swap(distance_list,0,distance_list.size()-1);
-//                searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
-//                trending_view.setAdapter(searchAdapter);
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-//    }
-//
-//    private void onRestClick(int position) {
-//        Intent intent = new Intent(this, RestPage.class);
-//        intent.putExtra("Owner_id", rest_id_list.get(position));
-//        startActivityForResult(intent,7);
-//    }
+    private void update_trending() {
+        DatabaseReference ref;
+        ref = FirebaseDatabase.getInstance().getReference();
+        ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                int current = 0;
+                boolean deleted = false;
+                rest_logo_list.clear();
+                rest_name_list.clear();
+                rating_list.clear();
+                city_list.clear();
+                distance_list.clear();
+                trending_view.removeAllViews();
+
+                for( DataSnapshot snap: snapshot.getChildren()){
+                    deleted = false;
+                    String restname = snap.child("name").getValue().toString();
+                    String uid = snap.child("ownerId").getValue().toString();
+                    String rating = snap.child("currentRating").getValue().toString();
+                    String city = snap.child("city").getValue().toString();
+                    String rest_lat = snap.child("location").child("latitude").getValue().toString();
+                    String rest_lon = snap.child("location").child("longitude").getValue().toString();
+
+                    //calculating distance from user to restaurant
+                    DecimalFormat df = new DecimalFormat("#.##");
+                    double d =distance(defult_lat,Double.parseDouble(rest_lat),defult_lon,Double.parseDouble(rest_lon),0,0)/1000;
+                    String distance = String.valueOf((df.format(d)));
+
+                    //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
+
+                    rest_name_list.add(restname);
+                    rest_id_list.add(uid);
+                    rating_list.add(rating);
+                    city_list.add(city);
+                    distance_list.add(distance);
+                    //rest_logo_list.add(logo);   //logo when storage ready
+
+                    current++;
+                    if(current == 10){
+                        break;
+                    }
+                }
+                Collections.swap(rest_name_list,0,rest_name_list.size()-1);
+                Collections.swap(rest_id_list,0,rest_id_list.size()-1);
+                Collections.swap(rating_list,0,rating_list.size()-1);
+                Collections.swap(city_list,0,city_list.size()-1);
+                Collections.swap(distance_list,0,distance_list.size()-1);
+                searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
+                trending_view.setAdapter(searchAdapter);
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void onRestClick(int position) {
+        Intent intent = new Intent(this, RestPage.class);
+        intent.putExtra("Owner_id", rest_id_list.get(position));
+        startActivityForResult(intent,7);
+    }
 
 
     @Override
