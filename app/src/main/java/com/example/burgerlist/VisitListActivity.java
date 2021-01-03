@@ -5,11 +5,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,7 +37,7 @@ public class VisitListActivity extends AppCompatActivity {
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("Users").child(MainActivity.get_user_id()).child("My list");
 
-        mListView = (ListView) findViewById(R.id.MyListVisit);
+        mListView = (ListView) findViewById(R.id.menu_list);
         ratings = new ArrayList<>();
 
         read_ress();

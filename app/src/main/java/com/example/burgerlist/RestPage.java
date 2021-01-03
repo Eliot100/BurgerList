@@ -1,16 +1,11 @@
 package com.example.burgerlist;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-
 import android.Manifest;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -24,20 +19,33 @@ import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class RestPage extends AppCompatActivity {
     private static final int STORAGE_PERMISSION_CODE = 2;
+    private static final int RESULT_UPLODE = 3;
     private String rest_owner_id, rest_name, rest_phone, rest_rating = "5", rest_owner_id2;
     private String timeOfMessage, message, user_name, user_id = "";
     private boolean Current_User_Is_owner, Current_User_Loggedin;
@@ -45,17 +53,21 @@ public class RestPage extends AppCompatActivity {
     private Button addComment_btn, addToList_btn;
     private EditText comment_text;
     private ImageButton phone_btn, map_btn, Updates_btn;
+    private ImageView rest_img;
     private TextView ratingScore_text, workingHours_text, restName_title;
     private ScrollView menu_scrollview, comment_scrollview;
-    private ListView mListView;
+    private ListView mListView, menu_list;
     private RatingBar ratingBar;
     private ArrayList<Comment> rest_comments;
-    private CommentListAdapter adapter, adapter2;
+    private ArrayList<Dish> rest_menu;
+    private CommentListAdapter commentsAdapter;
+    private MenuListAdapter menuAdapter;
     private PopupWindow popUp;
     private static final int REQUEST_CALL = 1;
 
     private FirebaseDatabase database;
     private DatabaseReference ref;
+    private StorageReference storageReference;
     private double currentRating;
 
     @Override
@@ -77,17 +89,47 @@ public class RestPage extends AppCompatActivity {
         addToList_btn = (Button)findViewById(R.id.addtolist_btn);
         ratingBar = (RatingBar) findViewById(R.id.ratingBar);
         mListView = (ListView) findViewById(R.id.comment_listview);
+        menu_list = (ListView) findViewById(R.id.menu_list);
         rest_comments = new ArrayList<Comment>();
+        rest_menu = new ArrayList<Dish>();
 
         database = FirebaseDatabase.getInstance();
         ref = database.getReference("Restaurants").child(this.getIntent().getStringExtra("Owner_id"));
         get_rest_data();
         rest_owner_id2 = this.getIntent().getStringExtra("Owner_id");
+        setRestImage();
+        storageReference = FirebaseStorage.getInstance().getReference().child("uploads").child(rest_owner_id2).child("RestImage.jpeg");
         OwnerUpdates();
         get_comments();
+        get_menu();
         rating();
         ratingBarChange();
         takeACall();
+    }
+
+
+    private void setRestImage() {
+        rest_img = (ImageView) findViewById(R.id.rest_img);
+        try{
+            storageReference = FirebaseStorage.getInstance().getReference().child("uploads")
+                    .child(rest_owner_id2).child("RestImage.jpg");
+            File restImageFile = File.createTempFile("RestImg", "jpg");
+            storageReference.getFile(restImageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(getApplicationContext(), "Success to get Image", Toast.LENGTH_SHORT).show();
+                    Bitmap pic = BitmapFactory.decodeFile(restImageFile.getAbsolutePath());
+                    rest_img.setImageBitmap(pic);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Failed to get Image", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch ( Exception e){
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void OwnerUpdates() {
@@ -132,7 +174,7 @@ public class RestPage extends AppCompatActivity {
 
     private void GoAndUplode() {
         Intent intent = new Intent(RestPage.this, ResturantUpdatesActivity.class);
-        startActivityForResult(intent, 1);
+        startActivityForResult(intent, RESULT_UPLODE);
     }
 
     private void ratingBarChange() {
@@ -216,12 +258,6 @@ public class RestPage extends AppCompatActivity {
         });
     }
 
-
-    public void  display(){
-        adapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);
-        mListView.setAdapter(adapter);
-    }
-
     private void get_rest_data(){
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -247,7 +283,6 @@ public class RestPage extends AppCompatActivity {
                     ref.child("Comments").child(MainActivity.user_id).child(time).setValue(com).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-
                             Toast.makeText(getApplicationContext(), "Post successful", Toast.LENGTH_SHORT).show();
                         }
                     });
@@ -280,7 +315,6 @@ public class RestPage extends AppCompatActivity {
     private void update_page(){
         restName_title.setText(rest_name);
         ratingScore_text.setText("current rating: "+rest_rating);
-
     }
 
     public void get_comments(){
@@ -301,7 +335,7 @@ public class RestPage extends AppCompatActivity {
                         comment_text.setText("");
                     }
                 }
-                display();
+                displayComments();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -309,6 +343,52 @@ public class RestPage extends AppCompatActivity {
         });
     }
 
+    public void displayComments(){
+        commentsAdapter = new CommentListAdapter(this, R.layout.adapter_res_layout, rest_comments);
+        mListView.setAdapter(commentsAdapter);
+    }
+    public void displayMenu(){
+        menuAdapter = new MenuListAdapter(this, R.layout.adapter_res_layout, rest_menu);
+        menu_list.setAdapter(menuAdapter);
+    }
+
+    private void get_menu() {
+        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants")
+                .child(rest_owner_id2).child("Menu").child("Category");
+        comref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                rest_menu.clear();
+                String name, description, price;
+                for(DataSnapshot keynode : snapshot.getChildren()){
+                    for(DataSnapshot keynode2 : keynode.getChildren()){
+                        name = keynode2.child("name").getValue().toString();
+                        description =  keynode2.child("dec").getValue().toString();
+                        price = keynode2.child("price").getValue().toString();
+
+                        Dish dish = new Dish(name, description, price);
+                        rest_menu.add(dish);
+                    }
+                }
+//                displayMenu();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case RESULT_UPLODE:
+                if (resultCode == RESULT_OK ) {
+                    setRestImage();
+                }
+                break;
+        }
+    }
 
     private void check_user_is_owner(){
         if(rest_owner_id.equals(MainActivity.get_user_id()) == true){
