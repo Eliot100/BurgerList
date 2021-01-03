@@ -59,14 +59,11 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         String message = getItem(position).getMessage();
         String date = getItem(position).getDate();
 
-        //Create the person object with the information
-
         //create the view result for showing the animation
         final View result;
 
         //ViewHolder object
         ViewHolder holder;
-
 
         if(convertView == null){
             LayoutInflater inflater = LayoutInflater.from(mContext);

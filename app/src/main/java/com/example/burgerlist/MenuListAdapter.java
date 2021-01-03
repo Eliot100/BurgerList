@@ -28,6 +28,7 @@ public class MenuListAdapter extends ArrayAdapter<Dish> {
     private int mResource;
     private int lastPosition = -1;
 
+
     /**
      * Holds variables in a View
      */
@@ -58,19 +59,16 @@ public class MenuListAdapter extends ArrayAdapter<Dish> {
         String decription = getItem(position).getDec();
         String price = getItem(position).getPrice();
 
-        //Create the person object with the information
-
         //create the view result for showing the animation
         final View result;
 
         //ViewHolder object
         ViewHolder holder;
 
-
         if(convertView == null){
             LayoutInflater inflater = LayoutInflater.from(mContext);
             convertView = inflater.inflate(mResource, parent, false);
-            holder= new ViewHolder();
+            holder = new ViewHolder();
             holder.name = (TextView) convertView.findViewById(R.id.productName);
             holder.decription = (TextView) convertView.findViewById(R.id.productDescrption);
             holder.price = (TextView) convertView.findViewById(R.id.productPrice);

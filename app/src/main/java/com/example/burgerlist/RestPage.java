@@ -348,7 +348,7 @@ public class RestPage extends AppCompatActivity {
         mListView.setAdapter(commentsAdapter);
     }
     public void displayMenu(){
-        menuAdapter = new MenuListAdapter(this, R.layout.adapter_res_layout, rest_menu);
+        menuAdapter = new MenuListAdapter(this, R.layout.adapter_menu_product, rest_menu);
         menu_list.setAdapter(menuAdapter);
     }
 
@@ -370,7 +370,7 @@ public class RestPage extends AppCompatActivity {
                         rest_menu.add(dish);
                     }
                 }
-//                displayMenu();
+                displayMenu();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {

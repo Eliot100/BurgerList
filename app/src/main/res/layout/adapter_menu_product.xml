@@ -5,28 +5,26 @@
 
     <TextView
         android:id="@+id/productName"
-        android:layout_width="50dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:autoSizeTextType="uniform"
-        android:text="productName"
-        android:textStyle="bold" />
+        android:text="productName"/>
 
     <TextView
         android:id="@+id/productDescrption"
-        android:layout_width="238dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
-        android:text="productDescrption" />
+        android:text="productDescrption"
+        android:autoSizeTextType="uniform"/>
 
     <TextView
         android:id="@+id/productPrice"
-        android:layout_width="64dp"
-        android:layout_height="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:gravity="center"
         android:text="productPrice"
-        android:textStyle="bold" />
+        android:autoSizeTextType="uniform"/>
 
 </LinearLayout>

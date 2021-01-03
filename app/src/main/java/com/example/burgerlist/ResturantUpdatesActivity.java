@@ -55,24 +55,25 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
     private StorageReference storageRef;
     private StorageTask storageTask;
     private DatabaseReference databaseRef;
-    private DatabaseReference ref;
+    public DatabaseReference refMenu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_resturant_updates);
-        database = FirebaseDatabase.getInstance();
         storageRef = FirebaseStorage.getInstance().getReference("uploads").child(MainActivity.user_id);
-        databaseRef = FirebaseDatabase.getInstance().getReference("uploads");
-        ref = database.getReference("Restaurants").child(MainActivity.get_user_id());
+        database = FirebaseDatabase.getInstance();
+        databaseRef = database.getInstance().getReference("uploads");
+        refMenu = database.getReference("Restaurants").child(MainActivity.get_user_id()).child("Menu").child("Category");
 
         Return();
         UplodeRestImg();
-//        get_menu();
+        SetMenuVariables();
+        get_menu();
         addDish();
     }
 
-    private void addDish() {
+    private void SetMenuVariables() {
         menuUpdate_list = findViewById(R.id.menuUpdate_list);
         category_text = findViewById(R.id.category_text);
         dishName_text = findViewById(R.id.dishName_text);
@@ -82,6 +83,9 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
         rest_menu = new ArrayList<Dish>();
         menuAdapter = new MenuListAdapter(this, R.layout.adapter_res_layout, rest_menu);
         menuUpdate_list.setAdapter(menuAdapter);
+    }
+
+    private void addDish() {
         addDish_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,11 +109,10 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
         });
     }
 
-
     private void addDishToDB() {
         Dish dish =  new Dish(dishName_text.getText().toString(), dishDescription_text.getText().toString(), price_text.getText().toString());
-        ref.child("Menu").child("Category").child(category_text.getText().toString()).child(FirebaseAuth.getInstance().getUid())
-                .setValue(dish).addOnCompleteListener(new OnCompleteListener<Void>() {
+        String ItemKey = refMenu.child(category_text.getText().toString()).push().getKey();
+        refMenu.child(category_text.getText().toString()).child(ItemKey).setValue(dish).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 Toast.makeText(getApplicationContext(), "Post successful", Toast.LENGTH_SHORT).show();
@@ -124,35 +127,36 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
         price_text.setText("");
     }
 
-//    public void get_menu(){
-//        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants")
-//                .child(MainActivity.user_id).child("Menu").child("Category");
-//        comref.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                rest_menu.clear();
-//                for(DataSnapshot keynode : snapshot.getChildren()){
-//                    for(DataSnapshot keynode2 : keynode.getChildren()){
-//                        String name = keynode2.child("date").getValue().toString();
-//                        String description =  keynode2.child("message").getValue().toString();
-//                        String price = keynode2.child("user").getValue().toString();
-//
-//                        Dish dish = new Dish(name, description, price);
-//                        rest_menu.add(dish);
-//                    }
-//                }
-//                displayMenu();
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//            }
-//        });
-//    }
-//
-//    private void displayMenu() {
-//        menuAdapter = new MenuListAdapter(this, R.layout.adapter_res_layout, rest_menu);
-//        menuUpdate_list.setAdapter(menuAdapter);
-//    }
+    public void get_menu(){
+        DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants")
+                .child(MainActivity.user_id).child("Menu").child("Category");
+        comref.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                rest_menu.clear();
+                String name, description, price;
+                for(DataSnapshot keynode : snapshot.getChildren()){
+                    for(DataSnapshot keynode2 : keynode.getChildren()){
+                        name = keynode2.child("name").getValue().toString();
+                        description =  keynode2.child("dec").getValue().toString();
+                        price = keynode2.child("price").getValue().toString();
+
+                        Dish dish = new Dish(name, description, price);
+                        rest_menu.add(dish);
+                    }
+                }
+                displayMenu();
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void displayMenu() {
+        menuAdapter = new MenuListAdapter(this, R.layout.adapter_menu_product, rest_menu);
+        menuUpdate_list.setAdapter(menuAdapter);
+    }
 
     private void UplodeRestImg() {
         restImg = findViewById(R.id.restImg);
