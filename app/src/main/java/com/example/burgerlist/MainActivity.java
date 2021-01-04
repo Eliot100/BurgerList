@@ -46,7 +46,7 @@ import java.util.Collections;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private final int LOCATION_REQUEST_CODE = 10;
-    private static final int LOCATION_PERNISSION_REQUEST_CODE = 1234;
+    private final int LOCATION_PERNISSION_REQUEST_CODE = 1234;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     Button login_button, logout_button;
@@ -82,9 +82,9 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-////        setGoogleMapPermission();
-//        getLocationPermission();
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        //setGoogleMapPermission();
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
 //        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -173,61 +173,69 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     private void update_trending() {
-        DatabaseReference ref;
-        ref = FirebaseDatabase.getInstance().getReference();
-        ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int current = 0;
-                boolean deleted = false;
-                rest_logo_list.clear();
-                rest_name_list.clear();
-                rating_list.clear();
-                city_list.clear();
-                distance_list.clear();
-                trending_view.removeAllViews();
 
-                for( DataSnapshot snap: snapshot.getChildren()){
-                    deleted = false;
-                    String restname = snap.child("name").getValue().toString();
-                    String uid = snap.child("ownerId").getValue().toString();
-                    String rating = snap.child("currentRating").getValue().toString();
-                    String city = snap.child("city").getValue().toString();
-                    String rest_lat = snap.child("location").child("latitude").getValue().toString();
-                    String rest_lon = snap.child("location").child("longitude").getValue().toString();
 
-                    //calculating distance from user to restaurant
-                    DecimalFormat df = new DecimalFormat("#.##");
-                    double d = distance(defult_lat, Double.parseDouble(rest_lat), defult_lon, Double.parseDouble(rest_lon),0,0)/1000;
-                    String distance = String.valueOf((df.format(d)));
+        try{
+            DatabaseReference ref;
+            ref = FirebaseDatabase.getInstance().getReference();
+            ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    int current = 0;
+                    boolean deleted = false;
+                    rest_logo_list.clear();
+                    rest_name_list.clear();
+                    rating_list.clear();
+                    city_list.clear();
+                    distance_list.clear();
+                    trending_view.removeAllViews();
 
-                    //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
+                    for( DataSnapshot snap: snapshot.getChildren()){
+                        deleted = false;
+                        String restname = snap.child("name").getValue().toString();
+                        String uid = snap.child("ownerId").getValue().toString();
+                        String rating = snap.child("currentRating").getValue().toString();
+                        String city = snap.child("city").getValue().toString();
+                        String rest_lat = snap.child("location").child("latitude").getValue().toString();
+                        String rest_lon = snap.child("location").child("longitude").getValue().toString();
 
-                    rest_name_list.add(restname);
-                    rest_id_list.add(uid);
-                    rating_list.add(rating);
-                    city_list.add(city);
-                    distance_list.add(distance);
-                    //rest_logo_list.add(logo);   //logo when storage ready
+                        //calculating distance from user to restaurant
+                        DecimalFormat df = new DecimalFormat("#.##");
+                        double d = distance(defult_lat, Double.parseDouble(rest_lat), defult_lon, Double.parseDouble(rest_lon),0,0)/1000;
+                        String distance = String.valueOf((df.format(d)));
 
-                    current++;
-                    if(current == 10){
-                        break;
+                        //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
+
+                        rest_name_list.add(restname);
+                        rest_id_list.add(uid);
+                        rating_list.add(rating);
+                        city_list.add(city);
+                        distance_list.add(distance);
+                        //rest_logo_list.add(logo);   //logo when storage ready
+
+                        current++;
+                        if(current == 10){
+                            break;
+                        }
                     }
+                    Collections.swap(rest_name_list,0,rest_name_list.size()-1);
+                    Collections.swap(rest_id_list,0,rest_id_list.size()-1);
+                    Collections.swap(rating_list,0,rating_list.size()-1);
+                    Collections.swap(city_list,0,city_list.size()-1);
+                    Collections.swap(distance_list,0,distance_list.size()-1);
+                    searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
+                    trending_view.setAdapter(searchAdapter);
                 }
-                Collections.swap(rest_name_list,0,rest_name_list.size()-1);
-                Collections.swap(rest_id_list,0,rest_id_list.size()-1);
-                Collections.swap(rating_list,0,rating_list.size()-1);
-                Collections.swap(city_list,0,city_list.size()-1);
-                Collections.swap(distance_list,0,distance_list.size()-1);
-                searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
-                trending_view.setAdapter(searchAdapter);
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
 
-            }
-        });
+                }
+            });
+        }
+        catch (Exception e ){
+
+        }
+
     }
 
     private void onRestClick(int position) {
@@ -349,33 +357,37 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         } catch (Exception e) {
 
         }
+            try{
+                database = FirebaseDatabase.getInstance();
+                ref = database.getReference("Restaurants");
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        googleMap.clear();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            String name = (String) snapshot.child("name").getValue().toString();
+                            String latitude = (String) snapshot.child("location").child("latitude").getValue().toString();
+                            String longitude = (String) snapshot.child("location").child("longitude").getValue().toString();
+                            MarkerOptions markerOptions = new MarkerOptions();
+                            markerOptions.position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)));
+                            markerOptions.title(name);
+                            markerOptions.snippet("ok");
+                            googleMap.addMarker(markerOptions);
+                            //                    markerOptions.draggable(true);
+                            //                    Marker locationMarker = googleMap.addMarker(markerOptions);
+                            //                    locationMarker.setDraggable(true);
+                            //                    locationMarker.showInfoWindow();
+                        }
+                    }
 
-        database = FirebaseDatabase.getInstance();
-        ref = database.getReference("Restaurants");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                googleMap.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String name = (String) snapshot.child("name").getValue().toString();
-                    String latitude = (String) snapshot.child("location").child("latitude").getValue().toString();
-                    String longitude = (String) snapshot.child("location").child("longitude").getValue().toString();
-                    MarkerOptions markerOptions = new MarkerOptions();
-                    markerOptions.position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)));
-                    markerOptions.title(name);
-                    markerOptions.snippet("ok");
-                    googleMap.addMarker(markerOptions);
-//                    markerOptions.draggable(true);
-//                    Marker locationMarker = googleMap.addMarker(markerOptions);
-//                    locationMarker.setDraggable(true);
-//                    locationMarker.showInfoWindow();
-                }
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
+            }catch ( Exception e){
+
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
     }
 
     private void enableUserLocation() {
