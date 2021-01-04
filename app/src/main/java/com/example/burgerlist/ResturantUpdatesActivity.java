@@ -42,7 +42,7 @@ import java.util.ArrayList;
 public class ResturantUpdatesActivity extends AppCompatActivity {
     private ImageButton return_btn;
     private static final int PICK_REST_IMG = 1;
-    private Button rest_imgBtn, addDish_btn;
+    private Button rest_imgBtn, addDish_btn, removeDish_btn;
     private ImageView restImg;
     private ProgressBar RestImg_progressBar;
     private EditText category_text, dishName_text, dishDescription_text, price_text;
@@ -63,22 +63,23 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_resturant_updates);
         storageRef = FirebaseStorage.getInstance().getReference("uploads").child(MainActivity.user_id);
         database = FirebaseDatabase.getInstance();
-        databaseRef = database.getInstance().getReference("uploads");
-        refMenu = database.getReference("Restaurants").child(MainActivity.get_user_id()).child("Menu").child("Category");
+        databaseRef = database.getInstance().getReference("uploads").child(MainActivity.get_user_id());
+        refMenu = database.getReference("Restaurants").child(MainActivity.get_user_id()).child("Menu Category");
 
-        Return();
-        UplodeRestImg();
+        addRestImg();
         SetMenuVariables();
-        get_menu();
         addDish();
+        removeDish();
+        get_menu();
+        Return();
     }
+
 
     private void SetMenuVariables() {
         menuUpdate_list = findViewById(R.id.menuUpdate_list);
         category_text = findViewById(R.id.category_text);
         dishName_text = findViewById(R.id.dishName_text);
         price_text = findViewById(R.id.price_text);
-        addDish_btn  = findViewById(R.id.addDish_btn);
         dishDescription_text = findViewById(R.id.dishDescription_text);
         rest_menu = new ArrayList<Dish>();
         menuAdapter = new MenuListAdapter(this, R.layout.adapter_res_layout, rest_menu);
@@ -86,20 +87,21 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
     }
 
     private void addDish() {
+        addDish_btn  = findViewById(R.id.addDish_btn);
         addDish_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(category_text.equals("")){
+                if(category_text.getText().toString().equals("") ){
                     Toast.makeText(ResturantUpdatesActivity.this, "Enter category", Toast.LENGTH_LONG).show();
                 }
-                else if (dishName_text.equals("")){
+                else if (dishName_text.getText().toString().equals("")){
                     Toast.makeText(ResturantUpdatesActivity.this, "Enter dish name", Toast.LENGTH_LONG).show();
                 }
-                else if (dishDescription_text.equals("")){
-                    Toast.makeText(ResturantUpdatesActivity.this, "Enter dish description", Toast.LENGTH_LONG).show();
-                }
-                else if (price_text.equals("")){
+                else if (price_text.getText().toString().equals("")){
                     Toast.makeText(ResturantUpdatesActivity.this, "Enter dish price", Toast.LENGTH_LONG).show();
+                }
+                else if ( dishDescription_text.getText().toString().equals("")){
+                    Toast.makeText(ResturantUpdatesActivity.this, "Enter dish description", Toast.LENGTH_LONG).show();
                 }
                 else {
                     addDishToDB();
@@ -109,13 +111,33 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
         });
     }
 
+    private void removeDish() {
+        removeDish_btn = findViewById(R.id.removeDish_btn);
+        removeDish_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(category_text.getText().toString().equals("") ){
+                    Toast.makeText(ResturantUpdatesActivity.this, "Enter category", Toast.LENGTH_LONG).show();
+                }
+                else if (dishName_text.getText().toString().equals("")){
+                    Toast.makeText(ResturantUpdatesActivity.this, "Enter dish name", Toast.LENGTH_LONG).show();
+                }
+                else {
+                    refMenu.child(category_text.getText().toString()).child(category_text.getText().toString()).setValue(null);
+                    claerEditTexts();
+                }
+            }
+        });
+
+    }
+
     private void addDishToDB() {
-        Dish dish =  new Dish(dishName_text.getText().toString(), dishDescription_text.getText().toString(), price_text.getText().toString());
-        String ItemKey = refMenu.child(category_text.getText().toString()).push().getKey();
-        refMenu.child(category_text.getText().toString()).child(ItemKey).setValue(dish).addOnCompleteListener(new OnCompleteListener<Void>() {
+        Dish dish = new Dish(dishName_text.getText().toString(), dishDescription_text.getText().toString(), price_text.getText().toString());
+//        String ItemKey = refMenu.child(category_text.getText().toString()).push().getKey();
+        refMenu.child(category_text.getText().toString()).child(dish.name).setValue(dish).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                Toast.makeText(getApplicationContext(), "Post successful", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Dish added", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -129,7 +151,7 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
 
     public void get_menu(){
         DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants")
-                .child(MainActivity.user_id).child("Menu").child("Category");
+                .child(MainActivity.user_id).child("Menu Category");
         comref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -158,7 +180,7 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
         menuUpdate_list.setAdapter(menuAdapter);
     }
 
-    private void UplodeRestImg() {
+    private void addRestImg() {
         restImg = findViewById(R.id.restImg);
         rest_imgBtn = findViewById(R.id.rest_imgBtn);
         RestImg_progressBar = findViewById(R.id.RestImg_progressBar);
@@ -173,50 +195,6 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
                 }
             }
         });
-    }
-
-    private void uploadImage() {
-        if(RestImg_uri != null){
-            StorageReference fileRef = storageRef.child("RestImage"+"."+getImageFileExtension(RestImg_uri));
-            storageTask = fileRef.putFile(RestImg_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Handler handler = new Handler();
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            RestImg_progressBar.setProgress(0);
-                        }
-                    }, 5000);
-                    Toast.makeText(ResturantUpdatesActivity.this, "upload successful", Toast.LENGTH_LONG).show();
-                    ImageUpload imgUpload = new ImageUpload("RestImage", taskSnapshot.getUploadSessionUri().toString());
-                    String uploadId = databaseRef.push().getKey();
-                    databaseRef.child(uploadId).setValue(imgUpload);
-                }
-            })
-            .addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(ResturantUpdatesActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
-            })
-            .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
-                    double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
-                    RestImg_progressBar.setProgress((int) progress);
-                }
-            });
-
-        } else {
-            Toast.makeText(ResturantUpdatesActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private String getImageFileExtension(Uri uri) {
-        ContentResolver contentResolver = getContentResolver();
-        MimeTypeMap mime = MimeTypeMap.getSingleton();
-        return mime.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
     private void openImage() {
@@ -238,6 +216,51 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    private void uploadImage() {
+        if(RestImg_uri != null){
+            StorageReference fileRef = storageRef.child("RestImage"+"."+getImageFileExtension(RestImg_uri));
+            storageTask = fileRef.putFile(RestImg_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            RestImg_progressBar.setProgress(0);
+                        }
+                    }, 5000);
+                    Toast.makeText(ResturantUpdatesActivity.this, "upload successful", Toast.LENGTH_LONG).show();
+                    ImageUpload imgUpload = new ImageUpload("RestImage", taskSnapshot.getUploadSessionUri().toString());
+//                    String uploadId = databaseRef.push().getKey();
+//                    databaseRef.child(uploadId).setValue(imgUpload);
+                    databaseRef.child("RestImage").setValue(imgUpload);
+                }
+            })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(ResturantUpdatesActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(@NonNull UploadTask.TaskSnapshot snapshot) {
+                            double progress = (100.0 * snapshot.getBytesTransferred() / snapshot.getTotalByteCount());
+                            RestImg_progressBar.setProgress((int) progress);
+                        }
+                    });
+
+        } else {
+            Toast.makeText(ResturantUpdatesActivity.this, "No file selected", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private String getImageFileExtension(Uri uri) {
+        ContentResolver contentResolver = getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return mime.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 
     private void Return() {

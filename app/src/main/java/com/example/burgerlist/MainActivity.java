@@ -46,7 +46,7 @@ import java.util.Collections;
 
 public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
     private final int LOCATION_REQUEST_CODE = 10;
-    private final int LOCATION_PERNISSION_REQUEST_CODE = 1234;
+    private static final int LOCATION_PERNISSION_REQUEST_CODE = 1234;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     Button login_button, logout_button;
@@ -82,11 +82,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        setGoogleMapPermission();
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+////        setGoogleMapPermission();
+//        getLocationPermission();
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         login_button = (Button) findViewById(R.id.login_button);
         logout_button = (Button) findViewById(R.id.logout_button);

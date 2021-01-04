@@ -35,7 +35,7 @@
 
     <EditText
         android:id="@+id/RestName"
-        android:layout_width="227dp"
+        android:layout_width="230dp"
         android:layout_height="67dp"
         android:autoSizeTextType="uniform"
         android:ems="10"
@@ -49,14 +49,13 @@
 
     <EditText
         android:id="@+id/phoneNum"
-        android:layout_width="224dp"
+        android:layout_width="230dp"
         android:layout_height="67dp"
-        android:layout_marginBottom="592dp"
+        android:layout_marginTop="24dp"
         android:autoSizeTextType="uniform"
         android:ems="10"
         android:hint="Restaurant phone number"
         android:inputType="phone"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.491"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,7 +63,7 @@
 
     <EditText
         android:id="@+id/RestLng"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:autoSizeTextType="uniform"
         android:ems="10"
@@ -80,7 +79,7 @@
 
     <EditText
         android:id="@+id/RestLat"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="13dp"
         android:autoSizeTextType="uniform"
@@ -109,27 +108,27 @@
 
     <EditText
         android:id="@+id/street_text"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="9dp"
+        android:layout_marginTop="20dp"
         android:ems="10"
         android:hint="Street and number (Optional)"
         android:inputType="textPersonName"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.457"
+        app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/city_text" />
 
     <TextView
         android:id="@+id/city_text"
-        android:layout_width="wrap_content"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="Press here to choose city"
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintHorizontal_bias="0.486"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phoneNum" />
 
@@ -137,9 +136,10 @@
         android:id="@+id/kosher_switch_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
         android:layout_marginTop="32dp"
         android:text="Kosher"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.206"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RestLng" />
 
@@ -157,8 +157,8 @@
         android:id="@+id/vegetarian_switch_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="88dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginTop="20dp"
         android:text="Vegetarian"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/kosher_switch_create" />
@@ -167,8 +167,8 @@
         android:id="@+id/vegan_switch_create"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="68dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="20dp"
         android:text="Vegan"
         app:layout_constraintStart_toEndOf="@+id/vegetarian_switch_create"
         app:layout_constraintTop_toBottomOf="@+id/saturday_switch_create" />

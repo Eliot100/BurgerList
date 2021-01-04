@@ -354,7 +354,7 @@ public class RestPage extends AppCompatActivity {
 
     private void get_menu() {
         DatabaseReference comref = FirebaseDatabase.getInstance().getReference("Restaurants")
-                .child(rest_owner_id2).child("Menu").child("Category");
+                .child(rest_owner_id2).child("Menu Category");
         comref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
