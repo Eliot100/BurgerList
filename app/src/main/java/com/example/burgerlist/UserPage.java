@@ -2,49 +2,68 @@ package com.example.burgerlist;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class UserPage extends AppCompatActivity implements SearchAdapter.OnRestClickListner{
-    Button userRestButton;
-    Button createRestButton;
+    Button userRestButton, createRestButton;
+    ImageButton getUserImg_btn;
+    private ImageView userImg;
     TextView userPage_name , reviews_text;
     long num_of_review  ;
     private RecyclerView recycler_fav;
-
-    private DatabaseReference ref;
     private SearchAdapter searchAdapter;
-
-    private ArrayList<String> rest_id_list;
-    private ArrayList<String> rest_name_list;
-    private ArrayList<String> rating_list;
-    private ArrayList<String> rest_logo_list;
-    private ArrayList<String> city_list;
-    private ArrayList<String> distance_list;
-
-
-
+    private DatabaseReference ref;
+    private ArrayList<String> rest_id_list, rest_logo_list, rest_name_list, rating_list, city_list, distance_list;
+    private static final int STORAGE_PERMISSION_CODE = 2;
+    private static final int PICK_REST_IMG = 1;
+    private Uri UserImg_uri;
+    private StorageTask storageTask;
+    private DatabaseReference databaseRef;
+    private StorageReference storageReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_page);
+
+//        storageRef = FirebaseStorage.getInstance().getReference("uploads").child(MainActivity.user_id);
 
 
         userRestButton = (Button)findViewById(R.id.userRessButton);
@@ -73,8 +92,8 @@ public class UserPage extends AppCompatActivity implements SearchAdapter.OnRestC
         update_ui();
         get_fav_rest();
         set_review();
-
-
+        setUserImage();
+        addUserPic();
 
         userRestButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +108,101 @@ public class UserPage extends AppCompatActivity implements SearchAdapter.OnRestC
                 Create_RestPage();
             }
         });
+    }
+
+    private void setUserImage() {
+        userImg = (ImageView) findViewById(R.id.userImage);
+        try{
+            storageReference = FirebaseStorage.getInstance().getReference().child("uploads")
+                    .child(MainActivity.get_user_id()).child("UserImage.jpg");
+            File restImageFile = File.createTempFile("UserImg", "jpg");
+            storageReference.getFile(restImageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(getApplicationContext(), "Success to get Image", Toast.LENGTH_SHORT).show();
+                    Bitmap pic = BitmapFactory.decodeFile(restImageFile.getAbsolutePath());
+                    userImg.setImageBitmap(pic);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getApplicationContext(), "Failed to get Image", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch ( Exception e){
+            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void addUserPic() {
+        getUserImg_btn = findViewById(R.id.getUserImg_btn);
+//        getUserImg_btn.setVisibility(View.GONE);
+        getUserImg_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(storageTask != null && storageTask.isInProgress()){
+                    Toast.makeText(UserPage.this, "upload in progress", Toast.LENGTH_LONG).show();
+                } else {
+                    if(ContextCompat.checkSelfPermission(UserPage.this,
+                            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED){
+                        openImage();
+                    } else {
+                        requestStoragePermission();
+                    }
+                }
+            }
+        });
+    }
+
+
+    private void openImage() {
+        Intent i = new Intent();
+        i.setType("image/jpeg");
+        i.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(i, PICK_REST_IMG);
+    }
+
+    private void uploadUserImage() {
+        databaseRef = FirebaseDatabase.getInstance().getInstance().getReference("uploads").child(MainActivity.get_user_id());
+        if(UserImg_uri != null) {
+            Toast.makeText(UserPage.this, "upload in progress", Toast.LENGTH_LONG).show();
+            StorageReference fileRef = FirebaseStorage.getInstance().getReference("uploads").child(MainActivity.user_id).child("UserImage" + "."
+                    + MimeTypeMap.getSingleton().getExtensionFromMimeType(getContentResolver().getType(UserImg_uri)));
+            storageTask = fileRef.putFile(UserImg_uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    Toast.makeText(UserPage.this, "upload successful", Toast.LENGTH_LONG).show();
+                    ImageUpload imgUpload = new ImageUpload("UserImage", taskSnapshot.getUploadSessionUri().toString());
+                    databaseRef.child("RestImage").setValue(imgUpload);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(UserPage.this, "upload failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+    }
+
+    private void requestStoragePermission() {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(UserPage.this, Manifest.permission.READ_EXTERNAL_STORAGE)){
+            new AlertDialog.Builder(UserPage.this).setTitle("Permission needed").setMessage("This Permission is needed to upload files.")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(UserPage.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                                    STORAGE_PERMISSION_CODE);
+                        }
+                    }).setNegativeButton("cancel", new DialogInterface.OnClickListener(){
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            }).create().show();
+        } else {
+            ActivityCompat.requestPermissions(UserPage.this, new String[] {Manifest.permission.READ_EXTERNAL_STORAGE},
+                    STORAGE_PERMISSION_CODE);
+        }
     }
 
     private void get_fav_rest() {
@@ -142,14 +256,20 @@ public class UserPage extends AppCompatActivity implements SearchAdapter.OnRestC
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 4) {
-            if(resultCode == RESULT_OK){
-                createRestButton.setVisibility(View.GONE);
-                userRestButton.setVisibility(View.VISIBLE);
-            }
-            if (resultCode == RESULT_CANCELED) {
-                //might be usefull later
-            }
+        switch(requestCode) {
+            case PICK_REST_IMG:
+                if (resultCode == RESULT_OK && data != null && data.getData() != null) {
+                    UserImg_uri = data.getData();
+                    userImg.setImageURI(UserImg_uri);
+                    uploadUserImage();
+                }
+                break;
+            case 4:
+                if(resultCode == RESULT_OK){
+                    createRestButton.setVisibility(View.GONE);
+                    userRestButton.setVisibility(View.VISIBLE);
+                }
+                break;
         }
     }
 

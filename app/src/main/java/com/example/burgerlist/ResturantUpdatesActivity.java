@@ -232,9 +232,8 @@ public class ResturantUpdatesActivity extends AppCompatActivity {
                         }
                     }, 5000);
                     Toast.makeText(ResturantUpdatesActivity.this, "upload successful", Toast.LENGTH_LONG).show();
-                    ImageUpload imgUpload = new ImageUpload("RestImage", taskSnapshot.getUploadSessionUri().toString());
-//                    String uploadId = databaseRef.push().getKey();
-//                    databaseRef.child(uploadId).setValue(imgUpload);
+                    ImageUpload imgUpload = new ImageUpload("RestImage", ""
+                            + taskSnapshot.getUploadSessionUri().toString());
                     databaseRef.child("RestImage").setValue(imgUpload);
                 }
             })

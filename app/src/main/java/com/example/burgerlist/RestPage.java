@@ -62,7 +62,6 @@ public class RestPage extends AppCompatActivity {
     private ArrayList<Dish> rest_menu;
     private CommentListAdapter commentsAdapter;
     private MenuListAdapter menuAdapter;
-    private PopupWindow popUp;
     private static final int REQUEST_CALL = 1;
 
     private FirebaseDatabase database;
