@@ -1,6 +1,8 @@
 package com.example.burgerlist;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
@@ -13,6 +15,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.telecom.Call;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -33,10 +36,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
@@ -44,14 +49,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MainActivity extends AppCompatActivity {
     private final int LOCATION_REQUEST_CODE = 10;
     private final int LOCATION_PERNISSION_REQUEST_CODE = 1234;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
     Button login_button, logout_button;
-    Button userPageButton;
-    Button search_button;
+    Button userPageButton, search_button;
     TextView welome_user;
     static String user_id = "";
     static String user_name = "guest";
@@ -59,7 +63,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     static boolean isowner;
     static boolean isloggedin = false;
     private RecyclerView trending_view;
-    private SearchAdapter searchAdapter;
+    private SearchAdapter searchAdapter, searchAdapter2;
     private ArrayList<String> rest_id_list;
     private ArrayList<String> rest_name_list;
     private ArrayList<String> rating_list;
@@ -70,23 +74,29 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
     FusedLocationProviderClient fusedLocationProviderClient;
     private FirebaseDatabase database;
     private DatabaseReference ref;
+    private MapFragment mapFragment;
     // defaul location for user if gps iskill
     // tel aviv כיכר המדינה
     double defult_lat = 32.086619;
     double defult_lon = 34.789621;
-    protected static final int MapDiffZoom = 10;
+    protected static final int MapDiffZoom = 10, MapContryZoom = 6;
     private boolean locationPermissionGranted = false;
+    private RecyclerView Loc_view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        try {
+            setMap();
+        } catch (Exception e){
 
-        //setGoogleMapPermission();
-//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        }
+        try {
+        } catch (Exception e){
+
+        }
+
 
         login_button = (Button) findViewById(R.id.login_button);
         logout_button = (Button) findViewById(R.id.logout_button);
@@ -153,31 +163,129 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         });
     }
 
-    private void InitMap() {
+    private void setMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(MainActivity.this);
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        getLocationPermission();
+
+        Loc_view = (RecyclerView)findViewById(R.id.Loc_view);
+        Loc_view.setHasFixedSize(true);
+        Loc_view.setLayoutManager(new LinearLayoutManager(this));
+        Loc_view.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
+
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+                LatLng jerusalem  = new LatLng(31.7683, 35.2137);
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(jerusalem).zoom(MapContryZoom).build();
+                mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                if(locationPermissionGranted) {
+                    try {
+                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+                        if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                            enableUserLocation();
+                            zoomToUserLoc();
+                        } else if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+                        } else {
+                            ActivityCompat.requestPermissions(MainActivity.this,
+                                    new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
+                        }
+                    } catch (Exception e) {
+                        Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                addMarkers();
+                addRestByLocation();
+            }
+        });
+    }
+
+    private void addRestByLocation() {
+        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                LatLng pos = marker.getPosition();
+                FirebaseDatabase.getInstance().getReference("Restaurants").addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                        for( DataSnapshot snap: snapshot.getChildren()){
+                            String restname = snap.child("name").getValue().toString();
+                            String uid = snap.child("ownerId").getValue().toString();
+                            String rating = snap.child("currentRating").getValue().toString();
+                            String city = snap.child("city").getValue().toString();
+                            String rest_lat = snap.child("location").child("latitude").getValue().toString();
+                            String rest_lon = snap.child("location").child("longitude").getValue().toString();
+                            LatLng rest_Loc = new LatLng(Double.parseDouble(rest_lat),Double.parseDouble(rest_lon));
+
+                            DecimalFormat df = new DecimalFormat("#.##");
+                            double d = distance(defult_lat, rest_Loc.latitude, defult_lon, rest_Loc.longitude,0,0)/1000;
+                            String distance = String.valueOf((df.format(d)));
+
+                            if(pos.equals(rest_Loc)){
+                                searchAdapter2 = new SearchAdapter(MainActivity.this, ArrayListWithStr(uid), ArrayListWithStr(restname),
+                                        ArrayListWithStr(rating), ArrayListWithStr(city), ArrayListWithStr(distance), MainActivity.this::onRestClick);
+                                Loc_view.setAdapter(searchAdapter2);
+                                break;
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                return false;
+            }
+        });
+    }
+
+    private void addMarkers() {
+        try{
+            ref = FirebaseDatabase.getInstance().getReference("Restaurants");
+            ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    mMap.clear();
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String name = snapshot.child("name").getValue().toString();
+                        String rating = snapshot.child("currentRating").getValue().toString();
+                        String latitude = (String) snapshot.child("location").child("latitude").getValue().toString();
+                        String longitude = (String) snapshot.child("location").child("longitude").getValue().toString();
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)));
+                        markerOptions.title(name);
+                        mMap.addMarker(markerOptions);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Toast.makeText(MainActivity.this, databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                }
+            });
+        }catch ( Exception e){
+            Toast.makeText(MainActivity.this, e.getMessage(),Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void getLocationPermission() {
         String[] permissions = {FINE_LOCATION, COARSE_LOCATION};
         if(ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
-                FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-            if(ContextCompat.checkSelfPermission(MainActivity.this.getApplicationContext(),
-                    COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-                locationPermissionGranted = true;
-            } else {
-                ActivityCompat.requestPermissions(this, permissions, LOCATION_PERNISSION_REQUEST_CODE);
-            }
+                COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+            locationPermissionGranted = true;
+            Toast.makeText(MainActivity.this, "PermissionGranted",Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERNISSION_REQUEST_CODE);
         }
     }
 
     private void update_trending() {
-
-
         try{
-            DatabaseReference ref;
-            ref = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -232,10 +340,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
                 }
             });
         }
-        catch (Exception e ){
-
-        }
-
+        catch (Exception e ){  }
     }
 
     private void onRestClick(int position) {
@@ -244,6 +349,11 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         startActivityForResult(intent,7);
     }
 
+    private ArrayList<String> ArrayListWithStr(String str){
+        ArrayList a = new ArrayList<String>();
+        a.add(str);
+        return a;
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -267,7 +377,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void check_loggedin() {
         // if logged in get username from db
-        if (isloggedin == true) {
+        if (get_isloggedin()) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference().child("Users").child(user_id);
             ref.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -335,109 +445,50 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         user_restaurant_name = ress_name;
     }
 
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(this, "Map is ready",Toast.LENGTH_LONG).show();
-        getLocationPermission();
-        this.mMap = googleMap;
-        LatLng RamatGan = new LatLng(32.080799, 34.794508);
-        CameraPosition cameraPosition = new CameraPosition.Builder().target(RamatGan).zoom(MapDiffZoom).build();
-        this.mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        try {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                enableUserLocation();
-                zoomToUserLoc();
-            } else if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_COARSE_LOCATION)) {
-                    ActivityCompat.requestPermissions(this,
-                            new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
-            } else {
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, LOCATION_REQUEST_CODE);
-            }
-        } catch (Exception e) {
-
-        }
-            try{
-                database = FirebaseDatabase.getInstance();
-                ref = database.getReference("Restaurants");
-                ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        googleMap.clear();
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            String name = (String) snapshot.child("name").getValue().toString();
-                            String latitude = (String) snapshot.child("location").child("latitude").getValue().toString();
-                            String longitude = (String) snapshot.child("location").child("longitude").getValue().toString();
-                            MarkerOptions markerOptions = new MarkerOptions();
-                            markerOptions.position(new LatLng(Double.parseDouble(latitude), Double.parseDouble(longitude)));
-                            markerOptions.title(name);
-                            markerOptions.snippet("ok");
-                            googleMap.addMarker(markerOptions);
-                            //                    markerOptions.draggable(true);
-                            //                    Marker locationMarker = googleMap.addMarker(markerOptions);
-                            //                    locationMarker.setDraggable(true);
-                            //                    locationMarker.showInfoWindow();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-            }catch ( Exception e){
-
-            }
-
-    }
-
     private void enableUserLocation() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        this.mMap.setMyLocationEnabled(true);
+         mMap.setMyLocationEnabled(true);
     }
 
     private void zoomToUserLoc() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
-        locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-            @Override
-            public void onSuccess(Location location) {
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MapDiffZoom));
-            }
-        });
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        locationPermissionGranted = false;
-
-        switch (requestCode){
-            case LOCATION_PERNISSION_REQUEST_CODE:{
-                if(grantResults.length > 0 ){//&& grantResults[0] ==
-                    for(int j = 0; j < grantResults.length; j++){
-                        if(grantResults[j] != PackageManager.PERMISSION_GRANTED){
-                            locationPermissionGranted = false;
-                            return;
-                        }
-                        locationPermissionGranted = true;
-                        InitMap();
-                    }
+        try {
+            Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
+            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MapContryZoom));
                 }
-            }
+            });
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, e.getMessage(),Toast.LENGTH_LONG).show();
         }
     }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        switch (requestCode){
+//            case LOCATION_PERNISSION_REQUEST_CODE:{
+//                if(grantResults.length > 0 ){
+//                    for(int j = 0; j < grantResults.length; j++){
+//                        if(grantResults[j] != PackageManager.PERMISSION_GRANTED){
+//                            locationPermissionGranted = false;
+//                            return;
+//                        }
+//                        locationPermissionGranted = true;
+//                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+//                    }
+//                }
+//            }
+//        }
+//    }
+
 
     // code take from https://stackoverflow.com/questions/3694380/calculating-distance-between-two-points-using-latitude-longitude
     // code used only to calculate distance given 2 sets of lat and lon points

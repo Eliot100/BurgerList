@@ -1,7 +1,6 @@
 package com.example.burgerlist;
 
 import android.content.Context;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,7 +45,8 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         }
     }
 
-    public SearchAdapter(Context context, ArrayList<String> rest_id_list, ArrayList<String> rest_name_list, ArrayList<String> rating_list ,ArrayList<String> city_list, ArrayList<String> distance_list ,
+    public SearchAdapter(Context context, ArrayList<String> rest_id_list, ArrayList<String> rest_name_list,
+                         ArrayList<String> rating_list ,ArrayList<String> city_list, ArrayList<String> distance_list ,
                          OnRestClickListner onRestClickListner) {
         this.context = context;
         this.rest_id_list = rest_id_list;
