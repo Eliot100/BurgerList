@@ -50,18 +50,13 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
-    private final int LOCATION_REQUEST_CODE = 10;
-    private final int LOCATION_PERNISSION_REQUEST_CODE = 1234;
+    private final int LOCATION_REQUEST_CODE = 10, LOCATION_PERNISSION_REQUEST_CODE = 1234;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final String COARSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
-    Button login_button, logout_button;
-    Button userPageButton, search_button;
+    Button login_button, logout_button, userPageButton, search_button;
     TextView welome_user;
-    static String user_id = "";
-    static String user_name = "guest";
-    static String user_restaurant_name;
-    static boolean isowner;
-    static boolean isloggedin = false;
+    static String user_id = "", user_name = "guest", user_restaurant_name;
+    static boolean isowner, isloggedin = false;
     private RecyclerView trending_view;
     private SearchAdapter searchAdapter, searchAdapter2;
     private ArrayList<String> rest_id_list;
@@ -87,54 +82,45 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        try {
-            setMap();
-        } catch (Exception e){
 
-        }
-        try {
-        } catch (Exception e){
-
-        }
-
-
-        login_button = (Button) findViewById(R.id.login_button);
-        logout_button = (Button) findViewById(R.id.logout_button);
-        userPageButton = (Button) findViewById(R.id.userPageButton);
-        search_button = (Button) findViewById(R.id.search_button);
-        welome_user = (TextView) findViewById(R.id.user_welcom_text);
-        trending_view = (RecyclerView)findViewById(R.id.trending_recycle_view);
-
-        rest_name_list =  new ArrayList<String>();
-        rating_list =  new ArrayList<String>();
-        rest_logo_list =  new ArrayList<String>();
-        rest_id_list = new ArrayList<String>();
-        city_list = new ArrayList<String>();
-        distance_list = new ArrayList<String>();
-
-
-        welome_user.setText("Welcome " + user_name);
-        welome_user.setVisibility(View.VISIBLE);
-        login_button.setVisibility(View.GONE);
-        userPageButton.setVisibility(View.GONE);
+        setMap();
+        login();
+        logout();
+        welcome();
+        userPage();
         check_loggedin();
-
-
-        //setting up recycle view
-        trending_view.setHasFixedSize(true);
-        trending_view.setLayoutManager(new LinearLayoutManager(this));
-        trending_view.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-
         update_trending();
+        search();
+    }
 
-        // listeners
-        login_button.setOnClickListener(new View.OnClickListener() {
+    private void userPage() {
+        userPageButton = (Button) findViewById(R.id.userPageButton);
+        userPageButton.setVisibility(View.GONE);
+        userPageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                start_Login();
+                start_MyPage();
             }
         });
+    }
 
+    private void welcome() {
+        welome_user = (TextView) findViewById(R.id.user_welcom_text);
+        welome_user.setText("Welcome " + user_name);
+    }
+
+    private void search() {
+        search_button = (Button) findViewById(R.id.search_button);
+        search_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                start_Search();
+            }
+        });
+    }
+
+    private void logout() {
+        logout_button = (Button) findViewById(R.id.logout_button);
         logout_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,18 +133,14 @@ public class MainActivity extends AppCompatActivity {
                 userPageButton.setVisibility(View.GONE);
             }
         });
+    }
 
-        userPageButton.setOnClickListener(new View.OnClickListener() {
+    private void login() {
+        login_button = (Button) findViewById(R.id.login_button);
+        login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                start_MyPage();
-            }
-        });
-
-        search_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                start_Search();
+                start_Login();
             }
         });
     }
@@ -284,6 +266,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void update_trending() {
+        trending_view = (RecyclerView) findViewById(R.id.trending_recycle_view);
+        rest_name_list =  new ArrayList<String>();
+        rating_list =  new ArrayList<String>();
+        rest_logo_list =  new ArrayList<String>();
+        rest_id_list = new ArrayList<String>();
+        city_list = new ArrayList<String>();
+        distance_list = new ArrayList<String>();
+        trending_view.setHasFixedSize(true);
+        trending_view.setLayoutManager(new LinearLayoutManager(this));
+        trending_view.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
         try{
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
