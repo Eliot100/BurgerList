@@ -1,51 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rest_img"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_weight="1"
-        app:srcCompat="@drawable/ic_launcher_foreground" />
-
-    <LinearLayout
-        android:layout_width="130dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:gravity="center|right|center_horizontal">
+    <!--    <Button-->
+    <!--        android:id="@+id/childButton"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentRight="true"-->
+    <!--        android:text="go" />-->
 
 
-        <TextView
-            android:id="@+id/restname_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Rest name" />
-
-        <TextView
-            android:id="@+id/distance_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Distance " />
-
-        <TextView
-            android:id="@+id/city_item"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="City" />
-
-
-    </LinearLayout>
-
-    <RatingBar
-        android:id="@+id/ratingStars"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:autoSizeTextType="uniform"
-        android:gravity="center"
-        android:padding="4dp" />
+        android:layout_weight="1">
+
+        <view
+            android:id="@+id/restImg"
+            class="androidx.appcompat.widget.AppCompatImageView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="144dp"
+            android:layout_height="80dp"
+            android:layout_weight="2"
+            android:orientation="vertical"
+            android:padding="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/restImg"
+            app:layout_constraintTop_toTopOf="parent">
+
+
+            <TextView
+                android:id="@+id/restname_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Rest name"
+                android:textColor="#5063CD" />
+
+            <TextView
+                android:id="@+id/distance_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="Distance " />
+
+            <TextView
+                android:id="@+id/city_item"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="City" />
+
+
+        </LinearLayout>
+
+        <RatingBar
+            android:id="@+id/ratingStars"
+            style="@android:style/Widget.Material.Light.RatingBar"
+            android:layout_width="240dp"
+            android:layout_height="47dp"
+            android:autoSizeTextType="uniform"
+            android:backgroundTint="#FFF860"
+            android:gravity="bottom|left"
+            android:numStars="5"
+            android:paddingLeft="5dp"
+            android:progressBackgroundTint="#292928"
+            android:progressTint="#E6DE35"
+            android:scaleX="0.6"
+            android:scaleY="0.6"
+            android:secondaryProgressTint="#E6DE35"
+            android:stepSize="0.5"
+            android:translationX="-5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/linearLayout"
+            tools:progressBackgroundTintMode="src_atop" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </LinearLayout>

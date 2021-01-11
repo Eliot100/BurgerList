@@ -23,7 +23,6 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     private ArrayList<Bitmap> logo_list;
     private OnRestClickListner monRestClickListner;
 
-
     class SearchViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView logo;
         TextView rest_name;

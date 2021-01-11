@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -116,14 +117,15 @@ public class RestPage extends AppCompatActivity {
             storageReference.getFile(restImageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    Toast.makeText(getApplicationContext(), "Success to get Image", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Success to get Image", Toast.LENGTH_SHORT).show();
                     Bitmap pic = BitmapFactory.decodeFile(restImageFile.getAbsolutePath());
                     rest_img.setImageBitmap(pic);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getApplicationContext(), "Failed to get Image", Toast.LENGTH_SHORT).show();
+                    rest_img.setImageBitmap(BitmapFactory.decodeResource(MainActivity.resources, R.raw.burger));
+                    Toast.makeText(getApplicationContext(), "Failed to get image,\nget default image", Toast.LENGTH_SHORT).show();
                 }
             });
         } catch ( Exception e){
@@ -177,27 +179,38 @@ public class RestPage extends AppCompatActivity {
     }
 
     private void ratingBarChange() {
-        ref.child("Rating").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                currentRating = 0; int size = 0;
-                for (DataSnapshot postSnapshot: snapshot.getChildren()) {
-                    currentRating += Integer.parseInt(postSnapshot.getValue(Long.class).toString());
-                    size++;
+        if (MainActivity.get_isowner()) {
+            ref.child("Rating").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    currentRating = 0;
+                    int size = 0;
+                    for (DataSnapshot postSnapshot : snapshot.getChildren()) {
+                        currentRating += Integer.parseInt(postSnapshot.getValue(Long.class).toString());
+                        size++;
+                    }
+                    rest_rating = String.valueOf(currentRating / size);
+                    try {
+                        ref.child("currentRating").setValue(Double.valueOf(rest_rating));
+                    } catch (Exception e) {
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                    ratingBar.setRating(Float.parseFloat(rest_rating) / 2);
                 }
-                rest_rating = String.valueOf(currentRating/size);
-                try{
-                    ref.child("currentRating").setValue(Double.valueOf(rest_rating));
-                }catch (Exception e){
-                    Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                ratingBar.setRating(Float.parseFloat(rest_rating)/2);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
-        ratingBar.setNumStars(Integer.parseInt( rest_rating));
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+            ratingBar.setNumStars(Integer.parseInt(rest_rating));
+        } else {
+            ratingBar.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    return true;
+                }
+            });
+        }
     }
 
     private void rating() {

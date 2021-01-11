@@ -252,8 +252,8 @@ public class MainActivity extends AppCompatActivity {
                                 restLoc.add(rest);
                             }
                         }
-                        //RestViewAdapter searchAdapter2 = new RestViewAdapter(MainActivity.this, R.layout.search_rests_result, restLoc);
-//                        locList.setAdapter(searchAdapter2); TODO
+                        RestViewAdapter searchAdapter2 = new RestViewAdapter(MainActivity.this, R.layout.search_rests_result, restLoc);
+                        locList.setAdapter(searchAdapter2); //TODO
                     }
 
                     @Override
@@ -379,6 +379,11 @@ public class MainActivity extends AppCompatActivity {
     private void onRestClick(int position) {
         Intent intent = new Intent(this, RestPage.class);
         intent.putExtra("Owner_id", rest_id_list.get(position));
+        startActivity(intent);
+    }
+    public void onRestClick2(String rest_id) {
+        Intent intent = new Intent(this, RestPage.class);
+        intent.putExtra("Owner_id", rest_id);
         startActivity(intent);
     }
 
