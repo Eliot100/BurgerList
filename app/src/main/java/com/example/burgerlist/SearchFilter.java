@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,12 +18,18 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
+import java.io.File;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 
@@ -38,9 +46,12 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
     private ArrayList<String> rest_id_list;
     private ArrayList<String> rest_name_list;
     private ArrayList<String> rating_list;
-    private ArrayList<String> rest_logo_list;
+    private ArrayList<Bitmap> rest_logo_list;
     private ArrayList<String> city_list;
     private ArrayList<String> distance_list;
+
+
+    private  Bitmap img_logo;
 
     String current_search_text="";
     // defaul location for user if gps iskill
@@ -62,7 +73,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
         vegetarian_swt = (Switch)findViewById(R.id.vegitarian_switch);
         rest_name_list =  new ArrayList<String>();
         rating_list =  new ArrayList<String>();
-        rest_logo_list =  new ArrayList<String>();
+        rest_logo_list =  new ArrayList<Bitmap>();
         rest_id_list = new ArrayList<String>();
         city_list = new ArrayList<String>();
         distance_list = new ArrayList<String>();
@@ -148,6 +159,8 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                 distance_list.clear();
                 result_view.removeAllViews();
 
+                StorageReference storageReference;
+
 
                 for( DataSnapshot snap: snapshot.getChildren()){
                     deleted = false;
@@ -157,6 +170,29 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                     String city = snap.child("city").getValue().toString();
                     String rest_lat = snap.child("location").child("latitude").getValue().toString();
                     String rest_lon = snap.child("location").child("longitude").getValue().toString();
+
+
+
+                    //getting image
+                    try{
+                        storageReference = FirebaseStorage.getInstance().getReference().child("uploads")
+                                .child(uid).child("RestImage.jpg");
+                        File restImageFile = File.createTempFile("RestImg", "jpg");
+                        storageReference.getFile(restImageFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+                            @Override
+                            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                                img_logo = BitmapFactory.decodeFile(restImageFile.getAbsolutePath());
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                               img_logo = BitmapFactory.decodeResource(getResources() ,R.raw.burger);
+                            }
+                        });
+                    } catch ( Exception e){
+                        Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        img_logo = BitmapFactory.decodeResource(getResources() ,R.raw.burger);
+                    }
 
                     //calculating distance from user to restaurant
                     DecimalFormat df = new DecimalFormat("#.##");
@@ -178,6 +214,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                         rating_list.add(rating);
                         city_list.add(city);
                         distance_list.add(distance);
+                        rest_logo_list.add(img_logo);
                         //rest_logo_list.add(logo);   //logo when storage ready
                         current++;
 
@@ -187,7 +224,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                         rating_list.add(rating);
                         city_list.add(city);
                         distance_list.add(distance);
-                        //rest_logo_list.add(logo);   //logo when storage ready
+                        rest_logo_list.add(img_logo);
                         current++;
                     }
 
@@ -199,6 +236,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                             rating_list.remove(rating);
                             city_list.remove(city);
                             distance_list.remove(distance);
+                            rest_logo_list.remove(img_logo);
                             deleted = true;
                         }
                     }
@@ -211,6 +249,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                                 rating_list.remove(rating);
                                 city_list.remove(city);
                                 distance_list.remove(distance);
+                                rest_logo_list.remove(img_logo);
                                 deleted = true;
                             }
                         }
@@ -224,6 +263,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                                 rating_list.remove(rating);
                                 city_list.remove(city);
                                 distance_list.remove(distance);
+                                rest_logo_list.remove(img_logo);
                                 deleted = true;
                             }
                         }
@@ -237,6 +277,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                                 rating_list.remove(rating);
                                 city_list.remove(city);
                                 distance_list.remove(distance);
+                                rest_logo_list.remove(img_logo);
                                 deleted = true;
                             }
                         }
@@ -245,7 +286,7 @@ public class SearchFilter extends AppCompatActivity implements SearchAdapter.OnR
                         break;
                     }
                 }
-                searchAdapter = new SearchAdapter(SearchFilter.this , rest_id_list ,rest_name_list ,rating_list,city_list , distance_list , SearchFilter.this::onRestClick);
+                searchAdapter = new SearchAdapter(SearchFilter.this , rest_id_list ,rest_name_list ,rating_list,city_list , distance_list , SearchFilter.this::onRestClick , rest_logo_list);
                 result_view.setAdapter(searchAdapter);
             }
             @Override

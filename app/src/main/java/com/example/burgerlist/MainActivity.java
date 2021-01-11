@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView trending_view;
     private SearchAdapter searchAdapter;
     private ListView locList;
-    private RestViewAdapter searchAdapter2, Loc_view;
+   // private RestViewAdapter searchAdapter2, Loc_view;
     private ArrayList<RestView> restLoc;
     private ArrayList<String> rest_id_list, rest_name_list, rating_list, rest_logo_list, city_list, distance_list;
     GoogleMap mMap;
@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
         welcome();
         userPage();
         check_loggedin();
-        update_trending();
+       // update_trending();
         search();
         getLocation();
 //        locationRequest();
@@ -252,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                                 restLoc.add(rest);
                             }
                         }
-                        RestViewAdapter searchAdapter2 = new RestViewAdapter(MainActivity.this, R.layout.search_rests_result, restLoc);
+                        //RestViewAdapter searchAdapter2 = new RestViewAdapter(MainActivity.this, R.layout.search_rests_result, restLoc);
 //                        locList.setAdapter(searchAdapter2); TODO
                     }
 

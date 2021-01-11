@@ -1,6 +1,7 @@
 package com.example.burgerlist;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
     private ArrayList<String> rating_list;
     private ArrayList<String> city_list;
     private ArrayList<String> distance_list;
+    private ArrayList<Bitmap> logo_list;
     private OnRestClickListner monRestClickListner;
 
 
@@ -57,6 +59,22 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         this.monRestClickListner = onRestClickListner;
     }
 
+    public SearchAdapter(Context context, ArrayList<String> rest_id_list, ArrayList<String> rest_name_list,
+                         ArrayList<String> rating_list ,ArrayList<String> city_list, ArrayList<String> distance_list ,
+                         OnRestClickListner onRestClickListner , ArrayList<Bitmap> logo_list) {
+        this.context = context;
+        this.rest_id_list = rest_id_list;
+        this.rest_name_list = rest_name_list;
+        this.rating_list = rating_list;
+        this.city_list = city_list;
+        this.distance_list = distance_list;
+        this.monRestClickListner = onRestClickListner;
+        this.logo_list = logo_list;
+    }
+
+
+
+
 
     @Override
     public SearchAdapter.SearchViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -69,6 +87,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.SearchView
         holder.rest_name.setText(rest_name_list.get(position));
         holder.city.setText(city_list.get(position));
         holder.distance.setText(distance_list.get(position)+" km");
+        holder.logo.setImageBitmap(logo_list.get(position));
 
         // need picture for logo and distance here.
     }
