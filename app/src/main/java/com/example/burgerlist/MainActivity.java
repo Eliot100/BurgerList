@@ -49,6 +49,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
+    private static final int FINE_LOCATION_PERMISSION_REQUEST_CODE = 13;
     public static Resources resources;
     private static final int LOGIN_CODE = 1;
     private static final int LOCATION_REQUEST_CODE = 10, LOCATION_PERMISSION_REQUEST_CODE = 12;
@@ -96,28 +97,34 @@ public class MainActivity extends AppCompatActivity {
         update_trending();
         search();
         getLocation();
+//        locationRequest();
         setMap();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setMap();
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                mMap = googleMap;
+            }
+        });
     }
 
     private void getLocation() {
         // https://stackoverflow.com/questions/10311834/how-to-check-if-location-services-are-enabled
-        lm = (LocationManager)this.getSystemService(Context.LOCATION_SERVICE);
+        lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch(Exception ex) {}
-
-        try {
             network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-        } catch(Exception ex) {}
-        if(!gps_enabled && !network_enabled) {
+        } catch (Exception ex) {
+        }
 
+        if (!gps_enabled && !network_enabled) {
             new AlertDialog.Builder(this)
                     .setMessage("gps not enabled")
                     .setPositiveButton("open location settings", new DialogInterface.OnClickListener() {
@@ -126,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                             goToLocationSettings();
                         }
                     })
-                    .setNegativeButton("Cancel",null)
+                    .setNegativeButton("Cancel", null)
                     .show();
         } else {
             locationRequest();
@@ -134,18 +141,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void locationRequest() {
-        if( locationPermissionGranted && gps_enabled) {//
-            try {
+        if (locationPermissionGranted && gps_enabled) {
+            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
+            if (ContextCompat.checkSelfPermission(MainActivity.this, COARSE_LOCATION) == PERMISSION_GRANTED) {
                 fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
-                if (ContextCompat.checkSelfPermission(MainActivity.this, COARSE_LOCATION) == PERMISSION_GRANTED) {
-                    fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(MainActivity.this);
-                    enableUserLocation();
-                    zoomToUserLoc();
-                } else {
-                    goToLocationSettings();
-                }
-            } catch (Exception e) {
-                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                enableUserLocation();
+                zoomToUserLoc();
+            } else {
+                goToLocationSettings();
             }
         }
     }
@@ -208,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onMapReady(GoogleMap googleMap) {
                 mMap = googleMap;
-                LatLng jerusalem  = new LatLng(31.7683, 35.2137);
+                LatLng jerusalem = new LatLng(31.7683, 35.2137);
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(jerusalem).zoom(MapContryZoom).build();
                 mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 addMarkers();
@@ -220,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addRestByLocation() {
 
-        ScrollView scrollview = (ScrollView)findViewById(R.id.scrollView3);
+        ScrollView scrollview = (ScrollView) findViewById(R.id.scrollView3);
         locList = findViewById(R.id.LocView);
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -231,18 +234,18 @@ public class MainActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         restLoc = new ArrayList<RestView>();
                         restLoc.clear();
-                        for( DataSnapshot snap: snapshot.getChildren()){
+                        for (DataSnapshot snap : snapshot.getChildren()) {
                             String rest_lat = snap.child("location").child("latitude").getValue().toString();
                             String rest_lon = snap.child("location").child("longitude").getValue().toString();
-                            LatLng rest_Loc = new LatLng(Double.parseDouble(rest_lat),Double.parseDouble(rest_lon));
+                            LatLng rest_Loc = new LatLng(Double.parseDouble(rest_lat), Double.parseDouble(rest_lon));
 
-                            if(pos.equals(rest_Loc)){
+                            if (pos.equals(rest_Loc)) {
                                 String restname = snap.child("name").getValue().toString();
                                 String uid = snap.child("ownerId").getValue().toString();
                                 String rating = snap.child("currentRating").getValue().toString();
                                 String city = snap.child("city").getValue().toString();
                                 DecimalFormat df = new DecimalFormat("#.##");
-                                double d = distance(defult_lat, rest_Loc.latitude, defult_lon, rest_Loc.longitude,0,0)/1000;
+                                double d = distance(defult_lat, rest_Loc.latitude, defult_lon, rest_Loc.longitude, 0, 0) / 1000;
                                 String distance = String.valueOf((df.format(d)));
 
                                 RestView rest = new RestView(uid, restname, distance, city, rating);
@@ -264,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addMarkers() {
-        try{
+        try {
             ref = FirebaseDatabase.getInstance().getReference("Restaurants");
             ref.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -284,18 +287,18 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Toast.makeText(MainActivity.this, databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             });
-        }catch ( Exception e){
-            Toast.makeText(MainActivity.this, e.getMessage(),Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
     private void getLocationPermission() {
         String[] permissions = {FINE_LOCATION, COARSE_LOCATION};
-        if(ContextCompat.checkSelfPermission(this, COARSE_LOCATION) == PERMISSION_GRANTED
-                && ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PERMISSION_GRANTED){
+        if (ContextCompat.checkSelfPermission(this, COARSE_LOCATION) == PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PERMISSION_GRANTED) {
             locationPermissionGranted = true;
         } else {
             ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
@@ -304,16 +307,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void update_trending() {
         trending_view = (RecyclerView) findViewById(R.id.trending_recycle_view);
-        rest_name_list =  new ArrayList<String>();
-        rating_list =  new ArrayList<String>();
-        rest_logo_list =  new ArrayList<String>();
+        rest_name_list = new ArrayList<String>();
+        rating_list = new ArrayList<String>();
+        rest_logo_list = new ArrayList<String>();
         rest_id_list = new ArrayList<String>();
         city_list = new ArrayList<String>();
         distance_list = new ArrayList<String>();
         trending_view.setHasFixedSize(true);
         trending_view.setLayoutManager(new LinearLayoutManager(this));
         trending_view.addItemDecoration(new DividerItemDecoration(this, LinearLayoutManager.VERTICAL));
-        try{
+        try {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             ref.child("Restaurants").orderByChild("currentRating").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -327,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                     distance_list.clear();
                     trending_view.removeAllViews();
 
-                    for( DataSnapshot snap: snapshot.getChildren()){
+                    for (DataSnapshot snap : snapshot.getChildren()) {
                         deleted = false;
                         String restname = snap.child("name").getValue().toString();
                         String uid = snap.child("ownerId").getValue().toString();
@@ -338,7 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
                         //calculating distance from user to restaurant
                         DecimalFormat df = new DecimalFormat("#.##");
-                        double d = distance(defult_lat, Double.parseDouble(rest_lat), defult_lon, Double.parseDouble(rest_lon),0,0)/1000;
+                        double d = distance(defult_lat, Double.parseDouble(rest_lat), defult_lon, Double.parseDouble(rest_lon), 0, 0) / 1000;
                         String distance = String.valueOf((df.format(d)));
 
                         //String logo = snap.child("logo").getValue().toString(); //logo when storage ready
@@ -351,25 +354,26 @@ public class MainActivity extends AppCompatActivity {
                         //rest_logo_list.add(logo);   //logo when storage ready
 
                         current++;
-                        if(current == 10){
+                        if (current == 10) {
                             break;
                         }
                     }
-                    Collections.swap(rest_name_list,0,rest_name_list.size()-1);
-                    Collections.swap(rest_id_list,0,rest_id_list.size()-1);
-                    Collections.swap(rating_list,0,rating_list.size()-1);
-                    Collections.swap(city_list,0,city_list.size()-1);
-                    Collections.swap(distance_list,0,distance_list.size()-1);
-                    searchAdapter = new SearchAdapter(MainActivity.this , rest_id_list ,rest_name_list ,city_list,rating_list, distance_list , MainActivity.this::onRestClick);
+                    Collections.swap(rest_name_list, 0, rest_name_list.size() - 1);
+                    Collections.swap(rest_id_list, 0, rest_id_list.size() - 1);
+                    Collections.swap(rating_list, 0, rating_list.size() - 1);
+                    Collections.swap(city_list, 0, city_list.size() - 1);
+                    Collections.swap(distance_list, 0, distance_list.size() - 1);
+                    searchAdapter = new SearchAdapter(MainActivity.this, rest_id_list, rest_name_list, city_list, rating_list, distance_list, MainActivity.this::onRestClick);
                     trending_view.setAdapter(searchAdapter);
                 }
+
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
                 }
             });
+        } catch (Exception e) {
         }
-        catch (Exception e ){  }
     }
 
     private void onRestClick(int position) {
@@ -378,7 +382,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private ArrayList<String> ArrayListWithStr(String str){
+    private ArrayList<String> ArrayListWithStr(String str) {
         ArrayList a = new ArrayList<String>();
         a.add(str);
         return a;
@@ -387,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode){
+        switch (requestCode) {
             case 1:
                 if (resultCode == RESULT_OK) {
                     user_id = data.getStringExtra("USER_ID");
@@ -403,15 +407,18 @@ public class MainActivity extends AppCompatActivity {
                 }
                 break;
             case LOCATION_REQUEST_CODE2:
-                try {
-                    gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-                    network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-                    if(gps_enabled && network_enabled) {
-                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-                        enableUserLocation();
-                        zoomToUserLoc();
+                if (resultCode == RESULT_OK) {
+                    try {
+                        gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
+                        network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                        if (gps_enabled && network_enabled) {
+                            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                            enableUserLocation();
+                            zoomToUserLoc();
+                        }
+                    } catch (Exception ex) {
                     }
-                } catch(Exception ex) {}
+                }
                 break;
         }
     }
@@ -464,8 +471,8 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void goToLocationSettings(){
-        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS );
+    private void goToLocationSettings() {
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
         startActivityForResult(intent, LOCATION_REQUEST_CODE);
     }
 
@@ -495,15 +502,21 @@ public class MainActivity extends AppCompatActivity {
 
     private void enableUserLocation() {
         getLocationPermission();
-        if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PERMISSION_GRANTED) {
-            if (mMap != null) {
-                mMap.setMyLocationEnabled(true);
+        setLocationIfIsFine();
+    }
+
+    private void setLocationIfIsFine() {
+        if (locationPermissionGranted) {
+            if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PERMISSION_GRANTED) {
+                if (mMap != null) {
+                    mMap.setMyLocationEnabled(true);
+                } else {
+                    Toast.makeText(this, "map is null", Toast.LENGTH_SHORT).show();
+                }
             } else {
-                Toast.makeText(this, "map is null",Toast.LENGTH_SHORT).show();
+                String[] permission = {FINE_LOCATION};
+                ActivityCompat.requestPermissions(this, permission, FINE_LOCATION_PERMISSION_REQUEST_CODE);
             }
-        } else {
-            String[] permission = {FINE_LOCATION};
-            ActivityCompat.requestPermissions(this, permission, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
@@ -512,36 +525,41 @@ public class MainActivity extends AppCompatActivity {
                 && ActivityCompat.checkSelfPermission(this, COARSE_LOCATION) != PERMISSION_GRANTED) {
             return;
         }
-        try {
-            Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
-            locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
-                @Override
-                public void onSuccess(Location location) {
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MapContryZoom));
-                }
-            });
-        } catch (Exception e) {
-            Toast.makeText(MainActivity.this, "couldn't zoom to user location",Toast.LENGTH_LONG).show();
-        }
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        Task<Location> locationTask = fusedLocationProviderClient.getLastLocation();
+        locationTask.addOnSuccessListener(new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, MapContryZoom));
+            }
+        });
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode){
+        switch (requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE:
-                if(grantResults.length > 0 ){
-                    for(int j = 0; j < grantResults.length; j++){
-                        if(grantResults[j] != PERMISSION_GRANTED){
-                            locationPermissionGranted = false;
+                if (grantResults.length > 0) {
+                    for (int j = 0; j < grantResults.length; j++) {
+                        if (grantResults[j] == PERMISSION_GRANTED) {
+                            Toast.makeText(MainActivity.this, "PermissionGranted", Toast.LENGTH_LONG).show();
+                            locationPermissionGranted = true;
+                            fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+                            setLocationIfIsFine();
                             return;
                         }
-                        Toast.makeText(MainActivity.this, "PermissionGranted",Toast.LENGTH_LONG).show();
-                        locationPermissionGranted = true;
-                        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
+                        locationPermissionGranted = false;
                     }
                 }
+                break;
+            case FINE_LOCATION_PERMISSION_REQUEST_CODE:
+                if (ActivityCompat.checkSelfPermission(this, FINE_LOCATION) != PERMISSION_GRANTED
+                        && ActivityCompat.checkSelfPermission(this, COARSE_LOCATION) != PERMISSION_GRANTED) {
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+                zoomToUserLoc();
                 break;
         }
     }
